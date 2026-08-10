@@ -106,6 +106,50 @@ that never leave the process, with no error to tell you.
 
 ---
 
+## 6. The exporter token cache isn't registered for you
+
+**Applies to:** .NET AI Teammates.
+
+**What the skill's reference says.** That `UseMicrosoftOpenTelemetry` registers
+`IExporterTokenCache<AgenticTokenStruct>` as part of its own wiring.
+
+**What actually happens.** It does not — verified against `Microsoft.OpenTelemetry` 1.0.7. You must
+register it yourself:
+
+```csharp
+var agenticTokenCache = new AgenticTokenCache();
+builder.Services.AddSingleton<IExporterTokenCache<AgenticTokenStruct>>(agenticTokenCache);
+```
+
+**Symptom.** The host fails to start with a dependency-injection error.
+
+**Why it's low-risk.** This one fails loudly and immediately, so it costs you minutes rather than
+days. It's recorded because the *documentation* points the wrong way, which makes the error
+confusing rather than obvious.
+
+**Check before working around it.** This may be fixed in the version you have.
+
+---
+
+## 7. `FromTurnContext` overwrites the agent id
+
+**Applies to:** .NET agents using `BaggageBuilder.FromTurnContext`.
+
+**What it does.** Supplies `user.id`, `user.name`, `microsoft.channel.name` and the conversation id
+from the activity — genuinely convenient.
+
+**Why that's a problem.** It **also** writes `gen_ai.agent.id`, from `Recipient.AgenticAppId`. If
+your agent resolves its id some other way — as an AI Teammate does, from the agentic instance id —
+then whichever call comes last wins, because `BaggageBuilder` keeps a single dictionary.
+
+**Symptom.** The agent id is right in ordinary chat turns and wrong on email-triggered ones. Easy to
+miss, because the common path looks correct.
+
+**What to do.** Chain your explicit `.AgentId()` **after** `.FromTurnContext()`, and verify on a
+non-chat turn rather than only in Teams chat.
+
+---
+
 ## Reporting
 
 If you hit a gap that isn't listed here, it's worth raising at
