@@ -30,7 +30,9 @@ span, some identity is doing it. There are three answers, and they are not inter
 
 Choosing wrong is not a cosmetic mistake — it changes which token you acquire, which endpoint you
 export telemetry to, and how activity is attributed in reporting. See
-[02-patterns/](../02-patterns/) for how to choose, and what goes wrong when you choose wrong.
+[Choosing Your Onboarding Path](../02-patterns/Choosing-Your-Onboarding-Path.md) for how to
+decide, and [The Three Token Chains](../02-patterns/The-Three-Token-Chains.md) for what each
+choice commits you to.
 
 ## Where your telemetry ends up
 

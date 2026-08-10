@@ -7,9 +7,9 @@ it links here rather than repeating it.
 
 | Pattern | What it covers | Status |
 | --- | --- | --- |
-| Choosing Your Onboarding Path | How to decide between user OBO, custom engine agent OBO, and agent identity | 🚧 Planned |
-| Identity Separation | Why the hosting app's identity and the agent blueprint must stay separate principals | 🚧 Planned |
-| The Three Token Chains | What token each path acquires, from which authority, for which audience | 🚧 Planned |
+| [Choosing Your Onboarding Path](Choosing-Your-Onboarding-Path.md) | How to decide between user OBO, custom engine agent OBO, and agent identity | ✅ Written |
+| [Identity Separation](Identity-Separation.md) | Why the hosting app's identity and the agent blueprint must stay separate principals | ✅ Written |
+| [The Three Token Chains](The-Three-Token-Chains.md) | What token each path acquires, from which authority, for which audience | ✅ Written |
 
 ## Adding a new pattern
 

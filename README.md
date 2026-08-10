@@ -41,7 +41,9 @@ That matters for three reasons. You need to review the changes before they reach
 | [Teams Agent — Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET, Python | Teams / M365 Copilot |
 | [AI Teammate — Agent Identity](01-scenarios/AI-Teammate-Agent-Identity/) | Agent's own identity | .NET | Teams / M365 Copilot |
 
-Not sure which applies to you? Start with [02-patterns/Choosing-Your-Onboarding-Path.md](02-patterns/).
+Not sure which applies to you? Start with
+[Choosing Your Onboarding Path](02-patterns/Choosing-Your-Onboarding-Path.md), which walks the
+decision and lists what each path costs you.
 
 ## Repository structure
 
