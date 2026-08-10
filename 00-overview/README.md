@@ -1,0 +1,89 @@
+# Overview — Onboarding an agent into Agent 365
+
+This section covers the concepts every runbook assumes. Read it once; the runbooks won't repeat it.
+
+## What onboarding actually means
+
+An agent that works on your laptop already reasons, calls tools and answers questions. Onboarding
+doesn't change any of that. It adds four things around it:
+
+| Capability | What it gives you | Skill |
+| --- | --- | --- |
+| **Identity** | The agent exists as a first-class object in your tenant, with its own registration and permissions | `a365-setup`, `make-a365-agent` |
+| **Observability** | Agent activity appears in Microsoft Defender, Microsoft Purview and the Microsoft 365 admin center | `instrument-observability` |
+| **Microsoft 365 data** | The agent can read and act on Mail, Calendar, files and more through Work IQ MCP servers | `add-workiq-tools` |
+| **Messaging** | The agent can be reached over Teams, email and @mentions | `make-ai-teammate` |
+
+You do not need all four. The runbooks are phased so you can stop after any one of them and still
+have a working, valid agent.
+
+## The one decision that shapes everything: whose identity acts?
+
+Every other choice follows from this. When your agent calls Microsoft Graph, or writes a telemetry
+span, some identity is doing it. There are three answers, and they are not interchangeable.
+
+| Path | Who acts | When to use it |
+| --- | --- | --- |
+| **User OBO** | The signed-in user, delegated to the agent | The agent is a tool a person drives. A web app where the user signs in. |
+| **Custom engine agent OBO** | The user, but obtained via the Teams/M365 channel rather than an interactive sign-in | The agent is hosted in Teams or M365 Copilot and acts for whoever messages it |
+| **Agent identity (AI Teammate)** | The agent itself, as its own directory principal | The agent acts autonomously, or needs to own resources and act when nobody is present |
+
+Choosing wrong is not a cosmetic mistake — it changes which token you acquire, which endpoint you
+export telemetry to, and how activity is attributed in reporting. See
+[02-patterns/](../02-patterns/) for how to choose, and what goes wrong when you choose wrong.
+
+## Where your telemetry ends up
+
+Once observability is wired, spans flow to three surfaces, and **they do not all accept the same
+data**:
+
+| Surface | What it ingests |
+| --- | --- |
+| **Microsoft Defender** (advanced hunting, `CloudAppEvents`) | Every operation — `InvokeAgent`, `InferenceCall`, `ExecuteToolBySDK`, `ExecuteToolByGateway`, `ExecuteToolByMCPServer` |
+| **Microsoft 365 admin center** (Agent Activity) | `invoke_agent` rows **only**, and it reads the caller identity off that span |
+| **Microsoft Purview** | Content and compliance signals |
+
+This asymmetry is the single most useful fact for troubleshooting. **If activity appears in Defender
+but not the admin center, the export plumbing is fine** — the problem is in the contents of your
+`invoke_agent` span, most often the caller identity. See
+[03-references/Troubleshooting.md](../03-references/) for how to diagnose it.
+
+Also worth knowing early: a successful export is **not** proof of ingestion. The exporter can return
+`HTTP 200` with an empty `partialSuccess` and the data can still be dropped downstream — for example
+if no user in the tenant holds an Agent 365 licence.
+
+## The skills, and their limits
+
+The [Agent 365 Skills](https://techcommunity.microsoft.com/blog/agent-365-blog/agent-365-skills-bring-your-agents-into-microsoft-agent-365-in-minutes/4529838)
+are the primary path through these runbooks. They are additive and idempotent — they don't delete or
+restructure your code, and re-running one is safe.
+
+They are also, at the time of writing, **incomplete in places**. Where we hit a gap building the
+reference agents, the runbook says so at the point where it matters and tells you what to do
+instead. Those gaps are collected in
+[03-references/Known-Skill-Gaps.md](../03-references/).
+
+This is not a criticism of the tooling — it is the difference between a runbook and a marketing
+page. You need to know where the automation stops.
+
+## What you need before starting
+
+| Requirement | Details |
+| --- | --- |
+| An agent | Either your own, or one of the starting points in [`01-scenarios/`](../01-scenarios/) |
+| Azure subscription | For the model deployment (Azure OpenAI or equivalent) |
+| Microsoft 365 tenant | With Agent 365 enabled and licensing assigned |
+| Tenant permissions | Sufficient to register applications and grant admin consent |
+| A coding assistant | Claude Code, GitHub Copilot CLI, or VS Code agent mode |
+| The skills | `gh skill add microsoft/agent365-skills` |
+
+Per-scenario prerequisites are listed in each runbook's Phase 0.
+
+## Related resources
+
+| Resource | Link |
+| --- | --- |
+| Agent 365 developer documentation | https://learn.microsoft.com/microsoft-agent-365/ |
+| Agent 365 Skills repository | https://github.com/microsoft/agent365-skills |
+| Agent 365 Skills announcement | https://techcommunity.microsoft.com/blog/agent-365-blog/agent-365-skills-bring-your-agents-into-microsoft-agent-365-in-minutes/4529838 |
+| Fully instrumented reference agents | https://github.com/qmatteoq/agent365-demos |

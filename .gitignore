@@ -1,0 +1,33 @@
+# Build output
+bin/
+obj/
+out/
+*.user
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+
+# Node
+node_modules/
+
+# Secrets and local configuration - never commit these
+.env
+.env.*
+!.env.example
+appsettings.Development.local.json
+*.local.json
+
+# Agent 365 generated artifacts - these carry tenant-specific identifiers
+a365.generated.config.json
+.a365-workspace-detection.local.json
+
+# Editor / OS
+.vs/
+.idea/
+.DS_Store
+Thumbs.db
