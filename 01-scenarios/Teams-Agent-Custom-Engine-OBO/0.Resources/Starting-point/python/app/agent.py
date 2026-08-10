@@ -49,6 +49,30 @@ def _build_credential(settings: Settings):
     return AzureCliCredential(tenant_id=settings.azure_openai_tenant_id)
 
 
+def _build_model(settings: Settings) -> AzureChatOpenAI:
+    """Build the chat model, preferring Entra credentials over an API key.
+
+    Key auth is offered because some environments still rely on it, but the key is a bearer
+    secret with no expiry and no per-caller identity. Many tenants disable keys by policy, in
+    which case the credential path below is the only one available.
+    """
+    common = {
+        "azure_endpoint": settings.azure_openai_endpoint,
+        "azure_deployment": settings.azure_openai_deployment,
+        "api_version": settings.azure_openai_api_version,
+        "temperature": 0,
+    }
+
+    if settings.azure_openai_api_key:
+        return AzureChatOpenAI(api_key=settings.azure_openai_api_key, **common)
+
+    credential = _build_credential(settings)
+    return AzureChatOpenAI(
+        azure_ad_token_provider=get_bearer_token_provider(credential, AZURE_OPENAI_SCOPE),
+        **common,
+    )
+
+
 class LearnAgent:
     """Wraps the LangChain agent and the Microsoft Learn MCP connection."""
 
@@ -99,16 +123,7 @@ class LearnAgent:
                 ", ".join(self._tool_names),
             )
 
-            credential = _build_credential(self._settings)
-            token_provider = get_bearer_token_provider(credential, AZURE_OPENAI_SCOPE)
-
-            model = AzureChatOpenAI(
-                azure_endpoint=self._settings.azure_openai_endpoint,
-                azure_deployment=self._settings.azure_openai_deployment,
-                api_version=self._settings.azure_openai_api_version,
-                azure_ad_token_provider=token_provider,
-                temperature=0,
-            )
+            model = _build_model(self._settings)
 
             # InMemorySaver keeps one conversation per thread_id, which is what gives each
             # Teams chat its multi-turn memory. It is process-local by design: restarting

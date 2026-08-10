@@ -41,6 +41,12 @@ when your signed-in identity lives in another tenant.
 
 You need the **Cognitive Services OpenAI User** role on the Azure OpenAI resource.
 
+Key auth is supported as an alternative. Do not put the key in `appsettings.json` — that file is
+committed. Use `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or the
+`AzureOpenAI__ApiKey` environment variable. Entra credentials are used whenever no key is set,
+which is the recommended path and the only one available in tenants where keys are disabled by
+policy.
+
 ## Run
 
 ```powershell

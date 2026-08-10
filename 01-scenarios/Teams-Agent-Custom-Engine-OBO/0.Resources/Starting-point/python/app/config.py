@@ -20,6 +20,10 @@ class Settings(BaseSettings):
     azure_openai_deployment: str = "gpt-4.1"
     azure_openai_api_version: str = "2024-10-21"
 
+    # Optional. Leave unset to authenticate with Entra credentials, which is the recommended
+    # path and the only one available in tenants where API keys are disabled by policy.
+    azure_openai_api_key: str | None = None
+
     # Tenant that owns the Azure OpenAI resource. A token issued by a different tenant
     # makes Azure OpenAI answer HTTP 400 "Tenant provided in token does not match
     # resource token", so the credential is pinned to it explicitly.

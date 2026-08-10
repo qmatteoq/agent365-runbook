@@ -111,8 +111,13 @@ teamsapptester
 Without it a token from another tenant produces
 `HTTP 400 – Tenant provided in token does not match resource token`.
 
-You need the **Cognitive Services OpenAI User** role on the Azure OpenAI resource. There is no
-API key anywhere.
+You need the **Cognitive Services OpenAI User** role on the Azure OpenAI resource.
+
+Key auth is supported as an alternative, but the key must not go in `appsettings.json` — that
+file is committed. Use `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or the
+`AzureOpenAI__ApiKey` environment variable. Entra credentials are used whenever no key is set,
+which is the recommended path and the only one available in tenants where keys are disabled by
+policy.
 
 There is deliberately **no `Connections` section** and **no `appPackage/`**. The Agents SDK logs
 `No connections found in configuration` at startup and runs fine in anonymous mode; the Agent 365

@@ -21,8 +21,10 @@ prompt, same Azure OpenAI deployment, different stack.
   az login --tenant <tenant-id>
   ```
 
-  The agent authenticates to Azure OpenAI with **Entra ID, not an API key**, so your account needs
-  the *Cognitive Services OpenAI User* role on the resource.
+  The agent authenticates to Azure OpenAI with **Entra ID by default**, so your account needs
+  the *Cognitive Services OpenAI User* role on the resource. Key auth is available as an
+  alternative via `AZURE_OPENAI_API_KEY`, but many tenants disable keys by policy, and Entra
+  credentials are the recommended path regardless.
 
 ## Configuration
 
@@ -37,6 +39,7 @@ Copy-Item .env.example .env
 | `AZURE_OPENAI_ENDPOINT` | The Azure OpenAI resource endpoint |
 | `AZURE_OPENAI_DEPLOYMENT` | The chat deployment name |
 | `AZURE_OPENAI_API_VERSION` | Azure OpenAI REST API version |
+| `AZURE_OPENAI_API_KEY` | Optional. Leave blank to use Entra credentials (recommended) |
 | `AZURE_OPENAI_TENANT_ID` | Tenant that owns the resource, see below |
 | `AZURE_OPENAI_USE_MANAGED_IDENTITY` | `false` locally, `true` when hosted on Azure |
 | `LEARN_MCP_ENDPOINT` | Microsoft Learn MCP server, streamable HTTP |

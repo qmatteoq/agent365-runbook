@@ -78,7 +78,9 @@ Everything else (Azure OpenAI, the MCP endpoint, the port) is ordinary applicati
 configuration bound by `pydantic-settings`.
 
 Azure OpenAI is reached with `AzureCliCredential` locally — run `az login` first — or with a
-managed identity when `AZURE_OPENAI_USE_MANAGED_IDENTITY=true` on Azure.
+managed identity when `AZURE_OPENAI_USE_MANAGED_IDENTITY=true` on Azure. Setting
+`AZURE_OPENAI_API_KEY` switches to key auth instead; leave it blank to use Entra credentials,
+which is the recommended path and the only one available where keys are disabled by policy.
 
 ## Running it
 

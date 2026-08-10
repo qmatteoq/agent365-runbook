@@ -26,8 +26,10 @@ in Microsoft Teams and Microsoft 365 Copilot.
 
 - .NET 10 SDK
 - Access to the Azure OpenAI resource configured in `appsettings.json`, with the
-  **Cognitive Services OpenAI User** role. Authentication uses `DefaultAzureCredential`, so
-  `az login` locally is enough — there is no API key anywhere.
+  **Cognitive Services OpenAI User** role. Authentication defaults to `DefaultAzureCredential`,
+  so `az login` locally is enough. Key auth is supported as an alternative — set it with
+  `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or `AzureOpenAI__ApiKey`, never in the
+  committed `appsettings.json`.
 - Node.js (only for the Agents Playground)
 
 ## Run and test locally
