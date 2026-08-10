@@ -9,7 +9,7 @@ A research agent for the Microsoft ecosystem, grounded in the official
 questions about Azure, Microsoft 365, Power Platform, .NET, Entra, Copilot and Dynamics 365,
 and cites the documentation it used.
 
-It is the same agent as the [web app starting point](../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/python/),
+It is the same agent as the [web app starting point](../../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/python/),
 but hosted in **Microsoft Teams and Microsoft 365 Copilot** through the **Microsoft 365 Agents
 SDK** instead of a standalone web app.
 

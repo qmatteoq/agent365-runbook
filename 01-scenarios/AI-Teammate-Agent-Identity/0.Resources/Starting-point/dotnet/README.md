@@ -11,7 +11,7 @@ Azure, Microsoft 365, Power Platform, .NET, Entra, Copilot and Dynamics 365, and
 documentation it used.
 
 Functionally it is the same agent as the
-[Teams starting point](../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/dotnet/) —
+[Teams starting point](../../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/dotnet/) —
 same stack, same system prompt. The difference is entirely in **how it gets onboarded**: this one
 becomes an **AI Teammate**, so it acts under its **own identity** (the Agentic User) rather than
 on behalf of the signed-in user.

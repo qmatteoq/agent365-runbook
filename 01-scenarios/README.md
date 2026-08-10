@@ -7,7 +7,7 @@ it into an Agent 365 agent.
 
 | Scenario | Onboarding path | Stacks | Hosting | Status |
 | --- | --- | --- | --- | --- |
-| [Web App Agent — User OBO](Web-App-Agent-User-OBO/) | User on-behalf-of | .NET Agent Framework, Python + LangChain | Web app (Blazor / FastAPI) | 🚧 In progress |
+| [Web App Agent — User OBO](Web-App-Agent-User-OBO/) | User on-behalf-of | .NET Agent Framework, Python + LangChain | Web app (Blazor / FastAPI) | ✅ Runbook written |
 | [Teams Agent — Custom Engine OBO](Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET Agent Framework, Python + LangChain | Teams / M365 Copilot | 🚧 In progress |
 | [AI Teammate — Agent Identity](AI-Teammate-Agent-Identity/) | Agent's own identity | .NET Agent Framework | Teams / M365 Copilot | 🚧 In progress |
 

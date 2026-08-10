@@ -8,7 +8,7 @@ A research agent that answers questions about the Microsoft ecosystem — Azure,
 Platform, .NET, Microsoft Entra, Copilot, Dynamics 365 — grounding every answer in the **official
 Microsoft Learn documentation** through the [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp).
 
-It is the same agent as the [web app starting point](../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/dotnet/),
+It is the same agent as the [web app starting point](../../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/dotnet/),
 but built on the **Microsoft 365 Agents SDK**, so the same code runs as a **custom engine agent**
 in Microsoft Teams and Microsoft 365 Copilot.
 
