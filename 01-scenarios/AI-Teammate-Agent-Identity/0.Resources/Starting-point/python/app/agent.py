@@ -1,8 +1,9 @@
 """The Microsoft Learn research agent: LangChain + Azure OpenAI + Microsoft Learn MCP.
 
-This module is deliberately free of any Teams or Agents SDK types. It is the same agent
-core used by the non-Teams Python agent in this repo, which keeps the interesting diff
-between the two samples confined to the hosting layer.
+This module is deliberately free of any Teams or Agents SDK types, and identical to the
+agent core used by the Teams starting point in this repo. That is the point: an AI
+Teammate differs in how it is *onboarded*, not in how it reasons, so the interesting diff
+between the two samples stays confined to the hosting and identity layers.
 """
 
 from __future__ import annotations
@@ -36,8 +37,9 @@ SYSTEM_PROMPT = (
     "the content you retrieved and cite the source URLs at the end of your answer.\n"
     "If the documentation does not cover the question, say so explicitly instead of guessing. "
     "Keep answers clear, concise and structured.\n"
-    "You are talking to the user inside Microsoft Teams, so format answers with short paragraphs "
-    "and bullet points rather than long prose, and keep them under roughly 300 words."
+    "You are talking to the user inside Microsoft Teams and Microsoft 365 Copilot, so format answers "
+    "with short paragraphs and bullet points rather than long prose, and keep them under roughly "
+    "300 words."
 )
 
 
@@ -135,8 +137,8 @@ class LearnAgent:
             model = _build_model(self._settings)
 
             # InMemorySaver keeps one conversation per thread_id, which is what gives each
-            # Teams chat its multi-turn memory. It is process-local by design: restarting
-            # the agent clears every conversation.
+            # chat its multi-turn memory. It is process-local by design: restarting the
+            # agent clears every conversation.
             self._agent = create_agent(
                 model=model,
                 tools=tools,
