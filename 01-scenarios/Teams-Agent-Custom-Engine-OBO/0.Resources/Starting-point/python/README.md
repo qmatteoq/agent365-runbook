@@ -51,7 +51,7 @@ this setup:
 | Identity | Where it comes from | Job |
 |---|---|---|
 | Bot channel app | You create it — an Azure Bot registration | Authenticates the Teams channel and signs outbound replies |
-| Teams app | You generate a GUID once and keep it stable | Identifies the app in the Teams catalogue |
+| Teams app | Generated for you by `build-app-package.ps1` and cached in `teams-app-id.local.json` | Identifies the app in the Teams catalogue |
 
 The bot channel app is a plain single-tenant Entra app, **not** an Agent 365 blueprint. Entra
 bars agentic applications from requesting client-credentials tokens (`AADSTS82001`), so a
@@ -59,7 +59,9 @@ blueprint cannot authenticate outbound Bot Framework replies. When this agent is
 Agent 365, the blueprint is added alongside — it never replaces the channel app.
 
 If you plan to run more than one Teams agent in the same tenant, give each its own bot app id
-and Teams app id, otherwise installing the second replaces the first.
+and Teams app id, otherwise installing the second replaces the first. Since each starting point
+caches its own `teams-app-id.local.json` next to its own script, separate copies get separate
+ids automatically.
 
 ## Configuration
 

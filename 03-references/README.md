@@ -16,7 +16,7 @@ The Agent 365 Skills automate most of the onboarding work, and the runbooks use 
 path. But automation that silently does the wrong thing is worse than no automation, because you
 don't find out until you're debugging production telemetry.
 
-Where we hit a gap building the reference agents, it is recorded here with: what we asked for, what
+Where we hit a gap building the reference agents, we record it here with: what we asked for, what
 the skill produced, why it was wrong, and what to do instead. These are point-in-time observations
 against a preview product — re-verify before assuming a gap still exists.
 

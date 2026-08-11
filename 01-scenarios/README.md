@@ -1,7 +1,7 @@
 # Scenarios
 
-Each scenario is a complete onboarding journey: an un-instrumented agent, and the runbook that turns
-it into an Agent 365 agent.
+Each scenario is a complete onboarding, start to finish: an un-instrumented agent, and the runbook
+that turns it into an Agent 365 agent.
 
 ## Available scenarios
 
@@ -13,9 +13,6 @@ it into an Agent 365 agent.
 
 The three scenarios are organised by **onboarding path**, not by stack, because the path is what
 changes the work. Within a scenario, .NET and Python appear as parallel variants of the same steps.
-
-> **Note on the AI Teammate scenario:** it ships a .NET starting point only. There is no Python
-> equivalent in the reference agents, and we would rather say so than publish an untested one.
 
 ## The agents themselves are all the same
 
@@ -53,13 +50,3 @@ Every runbook uses the same phases, and **each is a valid stopping point**:
 
 If you only need visibility, stop after Phase 2. If you don't need Microsoft 365 data access, skip
 Phase 3 entirely.
-
-## Adding a new scenario
-
-1. Create a folder under `01-scenarios/` using `PascalCase-With-Hyphens`.
-2. Add the four numbered documents and a `0.Resources/` folder.
-3. Add an un-instrumented starting point under `0.Resources/Starting-point/`, and **verify it builds
-   and answers a question before writing the runbook**.
-4. Strip every tenant-specific value from the starting point's configuration — no GUIDs, no real
-   endpoints, no secrets.
-5. Add a row to the table at the top of this file.
