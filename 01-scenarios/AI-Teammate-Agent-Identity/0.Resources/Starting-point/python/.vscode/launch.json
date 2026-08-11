@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Phase 0. Starts the agent on its own, with no tunnel.
+      //
+      // The Microsoft 365 Agents Playground posts straight to http://localhost:3981/api/messages,
+      // so nothing has to be publicly reachable to try the agent out. Use this one until the
+      // agent has an Agent 365 blueprint.
+      "name": "Run Learn teammate agent (Playground)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app.main",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "preLaunchTask": "sync dependencies",
+      // Use the project's own virtual environment rather than whatever interpreter VS Code
+      // happens to have selected. It must be the x86_64 CPython: this repo is developed on
+      // Windows on ARM, and tiktoken (via langchain-openai) ships no win-arm64 wheel, so a
+      // native ARM64 interpreter tries to build it from Rust source and fails.
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "windows": {
+        "python": "${workspaceFolder}/.venv/Scripts/python.exe"
+      }
+    },
+    {
+      // Phase 1 onwards. Brings the dev tunnel up first, then starts the agent.
+      //
+      // Once the agent is registered as an AI Teammate, its messaging endpoint is recorded on
+      // the blueprint and Teams calls it from outside, so it has to be publicly reachable.
+      "name": "Run Learn teammate agent (Teams, via dev tunnel)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "app.main",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "preLaunchTask": "start agent prerequisites",
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "windows": {
+        "python": "${workspaceFolder}/.venv/Scripts/python.exe"
+      }
+    }
+  ]
+}
