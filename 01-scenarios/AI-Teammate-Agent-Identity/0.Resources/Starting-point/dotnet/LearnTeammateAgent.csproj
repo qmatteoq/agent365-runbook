@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>LearnTeammateAgent</RootNamespace>
+    <!-- Required by "dotnet user-secrets", which the runbook uses to keep the Azure OpenAI
+         key and any other credentials out of this tracked appsettings.json. -->
+    <UserSecretsId>learn-teammate-agent-dotnet</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
