@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 
 from azure.identity import (
     AzureCliCredential,
@@ -65,6 +66,14 @@ def _build_model(settings: Settings) -> AzureChatOpenAI:
 
     if settings.azure_openai_api_key:
         return AzureChatOpenAI(api_key=settings.azure_openai_api_key, **common)
+
+    # AzureChatOpenAI reads AZURE_OPENAI_API_KEY from the environment on its own, and an
+    # empty value counts as set: it becomes SecretStr(""), which is not None, so the Azure
+    # client never substitutes its sentinel and the base client then rejects the falsy key
+    # with "Missing credentials". Passing api_key=None explicitly does not help - the
+    # variable has to be absent - so clear it before taking the credential path.
+    if not os.environ.get("AZURE_OPENAI_API_KEY", "").strip():
+        os.environ.pop("AZURE_OPENAI_API_KEY", None)
 
     credential = _build_credential(settings)
     return AzureChatOpenAI(

@@ -56,10 +56,12 @@ endpoint, which proxies Teams Graph and sets the bot `callbackUri` — the same 
 Developer Portal shows as **Notification URL**. When the endpoint changes later:
 
 ```powershell
-a365 setup blueprint --update-endpoint <url> --m365
+a365 setup blueprint --endpoint-only --messaging-endpoint <url>
 ```
 
-`--m365` is required; without it the Teams Graph re-registration is skipped silently.
+`--endpoint-only` skips blueprint creation and re-registers just the endpoint. `--update-endpoint <url>`
+does the same job as part of a fuller blueprint run, so both flags are real. `--m365` is not needed
+here on CLI 1.1.214 — the command takes the Teams Graph path on its own.
 
 Because there is no separate bot channel app, none of `dotnet-agent-teams`' identity gotchas
 apply here:

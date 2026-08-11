@@ -22,7 +22,7 @@
       // public url every time it is hosted, and that url is registered as the messaging
       // endpoint on the Agent 365 blueprint. An anonymous tunnel would hand out a new url on
       // each run and silently break the channel until the blueprint was updated by hand with
-      // "a365 setup blueprint --update-endpoint <url> --m365".
+      // "a365 setup blueprint --endpoint-only --messaging-endpoint <url>".
       //
       // Create it once, if it does not exist yet:
       //   devtunnel create python-agent-teammate-tunnel --allow-anonymous
