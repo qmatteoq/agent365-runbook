@@ -12,15 +12,20 @@
     (AADSTS82001), so a blueprint cannot authenticate outbound Bot Framework replies. The
     blueprint is added alongside and owns governance, Work IQ tools and observability.
 
-    TEAMS_APP_ID identifies the app in the Teams catalogue. It is unrelated to any Entra identity
-    and only has to stay stable across builds, otherwise each upload is treated as a brand new
-    app rather than an update. Generate one once with [guid]::NewGuid() and keep it.
+    TEAMS_APP_ID identifies the app in the Teams catalogue. It is unrelated to any Entra identity,
+    so it does not have to be supplied: this script generates one on the first build and caches it
+    in teams-app-id.local.json (gitignored) so that every later build reuses it. That stability
+    matters, because a new id makes Teams treat the upload as a brand new app rather than an
+    update to the one you already installed.
 
-    Both values are specific to your tenant, so there are no defaults. Pass them explicitly, or
-    set BOT_ID and TEAMS_APP_ID in the environment.
+    BOT_ID is specific to your tenant, so there is no default. Pass it explicitly or set BOT_ID in
+    the environment.
 
 .EXAMPLE
-    ./build-app-package.ps1 -BotId <bot-app-id> -TeamsAppId <teams-app-id>
+    ./build-app-package.ps1 -BotId <bot-app-id>
+
+.EXAMPLE
+    ./build-app-package.ps1 -BotId <bot-app-id> -TeamsAppId <existing-teams-app-id>
 #>
 [CmdletBinding()]
 param(
@@ -35,8 +40,29 @@ if (-not $BotId) {
     throw "BotId not supplied. Pass -BotId or set the BOT_ID environment variable."
 }
 
+# Resolve the Teams app id: an explicit value wins, then the cached one from a previous build,
+# and only if neither exists do we mint a new id and persist it.
+$teamsAppIdFile = Join-Path $PSScriptRoot 'teams-app-id.local.json'
+$teamsAppIdOrigin = 'supplied'
+
+if (-not $TeamsAppId -and (Test-Path $teamsAppIdFile)) {
+    $TeamsAppId = (Get-Content $teamsAppIdFile -Raw | ConvertFrom-Json).teamsAppId
+    $teamsAppIdOrigin = 'reused from teams-app-id.local.json'
+}
+
 if (-not $TeamsAppId) {
-    throw "TeamsAppId not supplied. Pass -TeamsAppId or set the TEAMS_APP_ID environment variable."
+    $TeamsAppId = [guid]::NewGuid().ToString()
+    $teamsAppIdOrigin = 'generated'
+}
+
+$parsedTeamsAppId = [guid]::Empty
+if (-not [guid]::TryParse($TeamsAppId, [ref]$parsedTeamsAppId)) {
+    throw "TeamsAppId '$TeamsAppId' is not a valid GUID."
+}
+$TeamsAppId = $parsedTeamsAppId.ToString()
+
+if ($teamsAppIdOrigin -ne 'reused from teams-app-id.local.json') {
+    @{ teamsAppId = $TeamsAppId } | ConvertTo-Json | Set-Content $teamsAppIdFile -Encoding UTF8
 }
 
 $source = Join-Path $PSScriptRoot 'appPackage'
@@ -57,7 +83,7 @@ try {
     Compress-Archive -Path (Join-Path $staging '*') -DestinationPath $OutputPath
 
     Write-Host "Built $OutputPath"
-    Write-Host "  Teams app id: $TeamsAppId"
+    Write-Host "  Teams app id: $TeamsAppId ($teamsAppIdOrigin)"
     Write-Host "  Bot id:       $BotId"
 }
 finally {

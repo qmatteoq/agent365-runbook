@@ -4,7 +4,7 @@ Each onboarding path acquires its observability token differently. This is the d
 Agent 365 onboarding and the part where a small mistake produces the most confusing symptom, so it
 is worth understanding rather than copying.
 
-Everything here is read from working implementations, not from documentation.
+Everything here comes from working implementations, not from documentation.
 
 ---
 

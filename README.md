@@ -4,19 +4,17 @@ Step-by-step runbooks for bringing **your own** agent into [Microsoft Agent 365]
 
 Each scenario starts from a **working agent that has no Agent 365 code in it at all**, and walks you through onboarding it yourself. You run the steps; you end up with an instrumented agent and an understanding of what changed and why.
 
-## How this repo is different from a sample gallery
-
-Most samples hand you the finished result. That tells you *what* correct looks like, but not *how* to get there from the agent you already have — which is the actual problem.
-
-Here, the code you clone is deliberately **un-instrumented**. Every runbook takes you from that starting point to a fully onboarded agent, one phase at a time, with a verification step at the end of each phase so you find out immediately when something is wrong rather than three phases later.
-
 ## The onboarding path is driven by skills
 
-The primary route through every runbook is the **Agent 365 Skills** — a set of six skills you install into your coding assistant (Claude Code, GitHub Copilot CLI, or VS Code agent mode) and drive in natural language.
+The primary route through every runbook is the **Agent 365 Skills** — a set of six skills you install into the AI coding assistant you already use, and drive in natural language.
 
-```
-gh skill add microsoft/agent365-skills
-```
+| Your coding assistant | Install with |
+| --- | --- |
+| Claude Code (app, web, CLI) | `/plugin marketplace add https://github.com/microsoft/agent365-skills` then `/plugin install agent365@agent365-skills` |
+| GitHub Copilot CLI, VS Code agent mode | `gh skill add microsoft/agent365-skills` |
+| Cursor, Windsurf, Codex CLI, Gemini CLI, and other agentskills.io-compatible tools | `node /path/to/agent365-skills/scripts/install.js` from your project, which installs into `.agents/skills/` |
+
+Full instructions, including how to verify the install: [Installing the Skills](00-overview/Installing-the-Skills.md).
 
 | Skill | What it does |
 | --- | --- |
@@ -31,7 +29,7 @@ gh skill add microsoft/agent365-skills
 
 > **What you type** → **what the skill does** → **the CLI commands and SDK code behind it** → **how to verify it worked**
 
-That matters for three reasons. You need to review the changes before they reach production. You need to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture — which we document where we found it — you need to know enough to correct it.
+That matters for a few reasons. You need to review the changes before they reach production, and to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture — which we document where we found it — you need to know enough to correct it.
 
 ## Scenarios
 
@@ -67,15 +65,11 @@ Each scenario folder follows the same layout:
 └── 4.Sample-prompts.md      ← prompts to exercise the finished agent
 ```
 
-## Seeing the finished result
-
-Every starting point in this repo corresponds to a fully instrumented agent in
-[**qmatteoq/agent365-demos**](https://github.com/qmatteoq/agent365-demos). If a step doesn't
-behave as described, compare against the finished version there.
-
 ## Prerequisites
+The runbooks assume you already have a working agent, or are using one of the starting points here. You will need also the following products and licenses:
 
-The runbooks assume you already have a working agent, or are using one of the starting points here. Beyond that you need an Azure subscription, a Microsoft 365 tenant with Agent 365 enabled, and appropriate licensing. Each runbook lists its own specific prerequisites in Phase 0.
+- An Azure subscription to create a Foundry project
+- A Microsoft 365 tenant with Agent 365 licenses (either standalone or included in the E7 bundle)
 
 ## Disclaimer
 

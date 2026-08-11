@@ -26,7 +26,7 @@ on behalf of the signed-in user.
 | Tools | Microsoft Learn MCP server |
 
 > This is the **plain** agent — no Agent 365 registration, observability or WorkIQ tools.
-> Onboarding is applied afterwards and is visible as the diff from
+> You apply the onboarding afterwards, and it shows up as the diff from
 > `plain/dotnet-agent-teammate` to `main`.
 
 ## How it fits together

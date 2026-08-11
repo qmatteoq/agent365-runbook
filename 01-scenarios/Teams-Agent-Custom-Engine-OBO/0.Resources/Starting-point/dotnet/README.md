@@ -5,8 +5,8 @@
 > it at all. That is deliberate — the runbook walks you through adding it.
 
 A research agent that answers questions about the Microsoft ecosystem — Azure, Microsoft 365, Power
-Platform, .NET, Microsoft Entra, Copilot, Dynamics 365 — grounding every answer in the **official
-Microsoft Learn documentation** through the [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp).
+Platform, .NET, Microsoft Entra, Copilot, Dynamics 365 — grounding every answer in the official
+Microsoft Learn documentation through the [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp).
 
 It is the same agent as the [web app starting point](../../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/dotnet/),
 but built on the **Microsoft 365 Agents SDK**, so the same code runs as a **custom engine agent**
@@ -56,12 +56,12 @@ Microsoft Learn and answer with citations.
 
 ## Publish to Teams / Microsoft 365 Copilot
 
-The `appPackage` folder contains everything needed to sideload the agent. Two placeholders must be
-replaced first:
+The `appPackage` folder contains everything needed to sideload the agent. Its manifest has two
+placeholders:
 
 | Placeholder | Value |
 | --- | --- |
-| `${{TEAMS_APP_ID}}` | Any GUID you generate for the Teams app |
+| `${{TEAMS_APP_ID}}` | Generated for you by `build-app-package.ps1` on the first build, then cached in `teams-app-id.local.json` (gitignored) so later builds reuse it |
 | `${{BOT_ID}}` | The **app (client) ID** of your Azure Bot registration |
 
 Then:
@@ -78,13 +78,13 @@ Then:
    dotnet user-secrets set "Connections:ServiceConnection:Settings:ClientSecret" "<secret>"
    ```
 
-5. **Zip and sideload**:
+5. **Build and sideload**:
 
    ```powershell
-   Compress-Archive -Path appPackage\* -DestinationPath appPackage.zip -Force
+   ./build-app-package.ps1 -BotId <bot-app-client-id>
    ```
 
-   Upload `appPackage.zip` in Teams via *Apps → Manage your apps → Upload an app*.
+   Upload the resulting `appPackage.zip` in Teams via *Apps → Manage your apps → Upload an app*.
 
 Because the manifest declares `copilotAgents.customEngineAgents` and includes `copilot` in the bot's
 scopes, the same package also surfaces the agent inside Microsoft 365 Copilot.
