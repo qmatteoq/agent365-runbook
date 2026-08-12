@@ -1,8 +1,8 @@
-# Starting point — Python + LangChain, FastAPI web app
+# Starting point: Python + LangChain, FastAPI web app
 
 > This is the **un-instrumented starting point** for the
-> [Web App Agent — User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
-> That is deliberate — the runbook walks you through adding it.
+> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
+> That is deliberate, the runbook walks you through adding it.
 
 A Microsoft ecosystem research assistant built with **LangChain (Python)**, **Azure OpenAI** and the
 official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), served as a small
@@ -18,7 +18,7 @@ rather than shipped here.
 
 ## Prerequisites
 
-- [uv](https://docs.astral.sh/uv/) — dependency management and the runner
+- [uv](https://docs.astral.sh/uv/) for dependency management and the runner
 - Python 3.12
 - The Azure CLI, signed in to the tenant that owns the Azure OpenAI resource:
 
@@ -98,7 +98,7 @@ pin once the adapters support 2.x.
 
 **Windows on ARM.** `tiktoken`, pulled in by `langchain-openai`, publishes no `win_arm64` wheel at
 any version, so on an ARM64 machine `uv sync` tries to build it from source and stops at
-`can't find Rust compiler`. Create the virtual environment from an **x64** interpreter instead —
+`can't find Rust compiler`. Create the virtual environment from an **x64** interpreter instead,
 it runs fine under emulation for an I/O bound agent:
 
 ```powershell
@@ -110,8 +110,8 @@ This is not needed on x64 Windows, macOS or Linux.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing — and of sign-in. Onboarding — agent identity,
-blueprint, Entra sign-in, observability — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing, and of sign-in. Onboarding (agent identity,
+blueprint, Entra sign-in, observability) is what the runbook adds.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 

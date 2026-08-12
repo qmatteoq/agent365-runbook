@@ -1,8 +1,8 @@
-# Starting point — .NET Agent Framework, AI Teammate
+# Starting point: .NET Agent Framework, AI Teammate
 
 > This is the **un-instrumented starting point** for the
-> [AI Teammate — Agent Identity](../../../3.Runbook.md) scenario. It has no Agent 365 code in it
-> at all, and no hosting layer yet. That is deliberate — the runbook walks you through adding
+> [AI Teammate: Agent Identity](../../../3.Runbook.md) scenario. It has no Agent 365 code in it
+> at all, and no hosting layer yet. That is deliberate. The runbook walks you through adding
 > both.
 
 A research agent for the Microsoft ecosystem, grounded in the official
@@ -11,7 +11,7 @@ Azure, Microsoft 365, Power Platform, .NET, Entra, Copilot and Dynamics 365, and
 documentation it used.
 
 Functionally it is the same agent as the
-[Teams starting point](../../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/dotnet/) —
+[Teams starting point](../../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/dotnet/),
 same stack, same system prompt. The difference is entirely in **how it gets onboarded**: this one
 becomes an **AI Teammate**, so it acts under its **own identity** (the Agentic User) rather than
 on behalf of the signed-in user.
@@ -25,7 +25,7 @@ on behalf of the signed-in user.
 | Model | Azure OpenAI (`gpt-4.1`) |
 | Tools | Microsoft Learn MCP server |
 
-> This is the **plain** agent — no Agent 365 registration, observability or WorkIQ tools.
+> This is the **plain** agent, no Agent 365 registration, observability or WorkIQ tools.
 > You apply the onboarding afterwards, and it shows up as the diff from
 > `plain/dotnet-agent-teammate` to `main`.
 
@@ -52,7 +52,7 @@ This is the biggest structural difference from `dotnet-agent-teams`, and it is d
 
 An AI Teammate's messaging endpoint is registered **on the blueprint**, not on an Azure Bot
 resource. `a365 setup all --aiteammate --m365` calls the MCP Platform `createAgentBlueprint`
-endpoint, which proxies Teams Graph and sets the bot `callbackUri` — the same value the Teams
+endpoint, which proxies Teams Graph and sets the bot `callbackUri`, the same value the Teams
 Developer Portal shows as **Notification URL**. When the endpoint changes later:
 
 ```powershell
@@ -61,7 +61,7 @@ a365 setup blueprint --endpoint-only --messaging-endpoint <url>
 
 `--endpoint-only` skips blueprint creation and re-registers just the endpoint. `--update-endpoint <url>`
 does the same job as part of a fuller blueprint run, so both flags are real. `--m365` is not needed
-here on CLI 1.1.214 — the command takes the Teams Graph path on its own.
+here on CLI 1.1.214. The command takes the Teams Graph path on its own.
 
 Because there is no separate bot channel app, none of `dotnet-agent-teams`' identity gotchas
 apply here:
@@ -69,7 +69,7 @@ apply here:
 | `dotnet-agent-teams` | This agent |
 |---|---|
 | Bot channel app + blueprint, kept strictly separate | Blueprint only |
-| Blueprint can't sign channel replies (`AADSTS82001`) | Not applicable — no channel app to sign as |
+| Blueprint can't sign channel replies (`AADSTS82001`) | Not applicable, no channel app to sign as |
 | `a365 setup all` overwrites the bot credentials in place | No bot credentials to overwrite |
 | Observability exported service-to-service | Agentic User identity |
 
@@ -111,11 +111,11 @@ teamsapptester
 
 `AzureOpenAI:TenantId` pins `DefaultAzureCredential` to the tenant that owns the resource.
 Without it a token from another tenant produces
-`HTTP 400 – Tenant provided in token does not match resource token`.
+`HTTP 400: Tenant provided in token does not match resource token`.
 
 You need the **Cognitive Services OpenAI User** role on the Azure OpenAI resource.
 
-Key auth is supported as an alternative, but the key must not go in `appsettings.json` — that
+Key auth is supported as an alternative, but the key must not go in `appsettings.json`, because that
 file is committed. Use `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or the
 `AzureOpenAI__ApiKey` environment variable. Entra credentials are used whenever no key is set,
 which is the recommended path and the only one available in tenants where keys are disabled by
@@ -123,14 +123,14 @@ policy.
 
 There is deliberately **no `Connections` section** and **no `appPackage/`**. The Agents SDK logs
 `No connections found in configuration` at startup and runs fine in anonymous mode; the Agent 365
-CLI writes the real connection settings during onboarding, and it also owns `manifest.json` —
+CLI writes the real connection settings during onboarding, and it also owns `manifest.json`.
 `a365 setup all --aiteammate` and `a365 publish` generate and stamp it, so it must not be
 hand-written.
 
 ## Next step
 
 This agent is intentionally free of Agent 365 plumbing, and has no hosting layer yet. Turning it
-into an AI Teammate — hosting, blueprint, observability, Work IQ — is what the runbook does.
+into an AI Teammate, with hosting, blueprint, observability and Work IQ, is what the runbook does.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
@@ -143,9 +143,8 @@ Some gotchas worth knowing before you start, all hit in practice:
   therefore be **20 characters or fewer**.
 - Reaching Teams requires a tenant admin to approve an agent instance from
   `https://admin.cloud.microsoft/#/agents/all/requested`. That is asynchronous and can take
-  minutes to hours — plan for it rather than assuming something has failed.
+  minutes to hours, so plan for it rather than assuming something has failed.
 
 To compare against the finished, fully instrumented version, see
 [`dotnet-agent-teammate`](https://github.com/qmatteoq/agent365-demos/tree/main/dotnet-agent-teammate)
 in the reference repo.
-

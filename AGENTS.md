@@ -24,5 +24,13 @@ These are the rules to follow when writing documentation:
 
 `01-scenarios/Web-App-Agent-User-OBO/3.Runbook.md` is the reference implementation. Match it when in doubt.
 
+## No dashes in prose
+
+Do not use em dashes (—) or en dashes (–) in prose. They are the most reliable tell that a machine wrote the text, and they are almost never the only punctuation that works. Reach for a comma first, then a period if the aside deserves its own sentence, a colon when what follows explains what came before, or parentheses for a genuine aside.
+
+This overrides the `humanizer` skill's voice-calibration rule, which would otherwise preserve dashes because the existing docs are full of them. They are being removed, not matched.
+
+Two things are left alone: hyphens in ordinary compounds (`sign-in`, `two-hop`, `on-behalf-of`) are not dashes, and anything inside a code block, a command, a URL, or a file path stays exactly as it is. Numeric ranges lose the dash too, so `60–90 min` becomes `60 to 90 min`.
+
 ## Accuracy
 Check claims against the repo before writing them down. The starting points under `0.Resources/Starting-point/` and their READMEs are the authority for ports, configuration keys, and CLI flags. If an external source contradicts what is in the repo, say so rather than quietly picking one.

@@ -1,11 +1,11 @@
-# Starting point — .NET Agent Framework, Blazor web app
+# Starting point: .NET Agent Framework, Blazor web app
 
 > This is the **un-instrumented starting point** for the
-> [Web App Agent — User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
-> That is deliberate — the runbook walks you through adding it.
+> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
+> That is deliberate, the runbook walks you through adding it.
 
 A minimal **Microsoft Agent Framework (.NET)** agent, hosted as a Blazor Server web app with a simple
-chat UI. No Teams hosting — you chat with it directly in the browser.
+chat UI. There is no Teams hosting, you chat with it directly in the browser.
 
 There's no authentication either: open the app and you're talking to the agent, anonymously. That's
 intentional. The OBO path needs a user token addressed to the agent blueprint, and the blueprint
@@ -46,7 +46,7 @@ when your signed-in identity lives in another tenant.
 
 You need the **Cognitive Services OpenAI User** role on the Azure OpenAI resource.
 
-Key auth is supported as an alternative. Do not put the key in `appsettings.json` — that file is
+Key auth is supported as an alternative. Do not put the key in `appsettings.json`, that file is
 committed. Use `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or the
 `AzureOpenAI__ApiKey` environment variable. Entra credentials are used whenever no key is set,
 which is the recommended path and the only one available in tenants where keys are disabled by
@@ -63,8 +63,8 @@ Then open http://localhost:5140.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing — and of sign-in. Onboarding — agent identity,
-blueprint, Entra sign-in, observability, Work IQ — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing, and of sign-in. Onboarding (agent identity,
+blueprint, Entra sign-in, observability, Work IQ) is what the runbook adds.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 

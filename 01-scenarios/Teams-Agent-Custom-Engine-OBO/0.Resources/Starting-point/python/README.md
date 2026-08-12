@@ -1,8 +1,8 @@
-# Starting point — Python + LangChain, Teams / M365 Copilot
+# Starting point: Python + LangChain, Teams / M365 Copilot
 
 > This is the **un-instrumented starting point** for the
-> [Teams Agent — Custom Engine OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in
-> it at all. That is deliberate — the runbook walks you through adding it.
+> [Teams Agent: Custom Engine OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in
+> it at all. That is deliberate. The runbook walks you through adding it.
 
 A research agent for the Microsoft ecosystem, grounded in the official
 [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp). It answers
@@ -50,13 +50,13 @@ this setup:
 
 | Identity | Where it comes from | Job |
 |---|---|---|
-| Bot channel app | You create it — an Azure Bot registration | Authenticates the Teams channel and signs outbound replies |
+| Bot channel app | You create it, an Azure Bot registration | Authenticates the Teams channel and signs outbound replies |
 | Teams app | Generated for you by `build-app-package.ps1` and cached in `teams-app-id.local.json` | Identifies the app in the Teams catalogue |
 
 The bot channel app is a plain single-tenant Entra app, **not** an Agent 365 blueprint. Entra
 bars agentic applications from requesting client-credentials tokens (`AADSTS82001`), so a
 blueprint cannot authenticate outbound Bot Framework replies. When this agent is onboarded to
-Agent 365, the blueprint is added alongside — it never replaces the channel app.
+Agent 365, the blueprint is added alongside. It never replaces the channel app.
 
 If you plan to run more than one Teams agent in the same tenant, give each its own bot app id
 and Teams app id, otherwise installing the second replaces the first. Since each starting point
@@ -79,7 +79,7 @@ CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID=<tenant>
 Everything else (Azure OpenAI, the MCP endpoint, the port) is ordinary application
 configuration bound by `pydantic-settings`.
 
-Azure OpenAI is reached with `AzureCliCredential` locally — run `az login` first — or with a
+Azure OpenAI is reached locally with `AzureCliCredential` after `az login`, or with a
 managed identity when `AZURE_OPENAI_USE_MANAGED_IDENTITY=true` on Azure. Setting
 `AZURE_OPENAI_API_KEY` switches to key auth instead; leave it blank to use Entra credentials,
 which is the recommended path and the only one available where keys are disabled by policy.
@@ -119,7 +119,7 @@ clears every conversation.
 **Port 3979.** If you run more than one Teams agent locally, give each its own port.
 
 **The dev tunnel url is not derived from the tunnel name.** The url is only printed while the
-tunnel is being hosted — read it, don't guess it. A *named* tunnel keeps its url across
+tunnel is being hosted. Read it, don't guess it. A *named* tunnel keeps its url across
 restarts, which is what lets the Azure Bot's messaging endpoint stay valid; an anonymous tunnel
 hands out a new url every run and silently breaks the channel.
 
@@ -130,7 +130,7 @@ the same interpreter so <kbd>F5</kbd> does not regress.
 
 **JWT validation is scoped to the messaging endpoint.** The Agents SDK sample registers
 `jwt_authorization_middleware` application-wide, which rejects every request that has no
-`Authorization` header — including health probes. Here it is applied to `POST /api/messages`
+`Authorization` header, including health probes. Here it is applied to `POST /api/messages`
 only; that endpoint is still fully protected.
 
 **The MCP handshake is lazy.** The Agents SDK only provides a running event loop once a turn
@@ -140,8 +140,8 @@ concurrent first turns wait for a single handshake instead of racing several.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing. Onboarding — blueprint, observability,
-Work IQ — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing. The runbook adds onboarding: blueprint, observability,
+and Work IQ.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 

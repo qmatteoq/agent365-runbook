@@ -1,12 +1,12 @@
 # Agent 365 Runbooks
 
-Step-by-step runbooks for bringing **your own** agent into [Microsoft Agent 365](https://learn.microsoft.com/microsoft-agent-365/) — identity, observability, Microsoft 365 data access, and messaging.
+Step-by-step runbooks for bringing **your own** agent into [Microsoft Agent 365](https://learn.microsoft.com/microsoft-agent-365/): identity, observability, Microsoft 365 data access, and messaging.
 
 Each scenario starts from a **working agent that has no Agent 365 code in it at all**, and walks you through onboarding it yourself. You run the steps; you end up with an instrumented agent and an understanding of what changed and why.
 
 ## The onboarding path is driven by skills
 
-The primary route through every runbook is the **Agent 365 Skills** — a set of six skills you install into the AI coding assistant you already use, and drive in natural language.
+The primary route through every runbook is the **Agent 365 Skills**, a set of six skills you install into the AI coding assistant you already use, and drive in natural language.
 
 | Your coding assistant | Install with |
 | --- | --- |
@@ -21,7 +21,7 @@ Full instructions, including how to verify the install: [Installing the Skills](
 | `a365-setup` | Installs the Agent 365 CLI, validates Azure prerequisites, detects your stack, routes you to the right path |
 | `make-a365-agent` | Registers a Blueprint for agents needing observability or catalog visibility, without the messaging layer |
 | `instrument-observability` | Wires OpenTelemetry and the Agent 365 tracing exporter |
-| `add-workiq-tools` | Connects Work IQ MCP servers — Mail, Calendar, Word and more |
+| `add-workiq-tools` | Connects Work IQ MCP servers: Mail, Calendar, Word and more |
 | `make-ai-teammate` | Adds Messaging and Notifications so the agent can receive Teams messages, email and @mentions |
 | `test-local` | Launches the agent alongside AgentsPlayground for local smoke testing |
 
@@ -29,15 +29,15 @@ Full instructions, including how to verify the install: [Installing the Skills](
 
 > **What you type** → **what the skill does** → **the CLI commands and SDK code behind it** → **how to verify it worked**
 
-That matters for a few reasons. You need to review the changes before they reach production, and to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture — which we document where we found it — you need to know enough to correct it.
+That matters for a few reasons. You need to review the changes before they reach production, and to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture, which we document where we found it, you need to know enough to correct it.
 
 ## Scenarios
 
 | Scenario | Onboarding path | Stacks | Hosting |
 | --- | --- | --- | --- |
-| [Web App Agent — User OBO](01-scenarios/Web-App-Agent-User-OBO/) | User on-behalf-of | .NET, Python | Web app |
-| [Teams Agent — Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET, Python | Teams / M365 Copilot |
-| [AI Teammate — Agent Identity](01-scenarios/AI-Teammate-Agent-Identity/) | Agent's own identity | .NET, Python | Teams / M365 Copilot |
+| [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | User on-behalf-of | .NET, Python | Web app |
+| [Teams Agent: Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET, Python | Teams / M365 Copilot |
+| [AI Teammate: Agent Identity](01-scenarios/AI-Teammate-Agent-Identity/) | Agent's own identity | .NET, Python | Teams / M365 Copilot |
 
 Not sure which applies to you? Start with
 [Choosing Your Onboarding Path](02-patterns/Choosing-Your-Onboarding-Path.md), which walks the

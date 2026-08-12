@@ -16,7 +16,7 @@ Three values have to agree:
 token azp  ==  gen_ai.agent.id  ==  the id in the export route
 ```
 
-When they agree, telemetry lands. When they disagree, you get `HTTP 403` — or worse, a `200` and
+When they agree, telemetry lands. When they disagree, you get `HTTP 403`, or worse, a `200` and
 nothing in the admin centre.
 
 **Each path makes a different value correct.** That is the whole difficulty. There is no single
@@ -30,7 +30,7 @@ nothing in the admin centre.
 
 ---
 
-## Chain 1 — User OBO (two hops, hand-rolled)
+## Chain 1: User OBO (two hops, hand-rolled)
 
 The agent proves *which agent it is* and *who it is acting for*, in one token.
 
@@ -47,7 +47,7 @@ sequenceDiagram
     App->>API: Export
 ```
 
-**Hop 1** — the blueprint authenticates as itself and asks for an exchange assertion scoped to the
+**Hop 1**: the blueprint authenticates as itself and asks for an exchange assertion scoped to the
 child agent identity:
 
 ```
@@ -59,7 +59,7 @@ fmi_path     = <agent identity app id>
 
 T1 is not an access token. It is only usable as a client assertion in hop 2.
 
-**Hop 2** — the agent identity performs the OBO exchange:
+**Hop 2**: the agent identity performs the OBO exchange:
 
 ```
 grant_type            = urn:ietf:params:oauth:grant-type:jwt-bearer
@@ -80,7 +80,7 @@ audience will not work as the assertion in hop 2.
 
 **Read the caller's object id correctly.** In .NET, use `GetObjectId()` from
 `Microsoft.Identity.Web`, *not* `FindFirst("oid")`. The OIDC handler renames inbound claims, so
-`oid` misses, falls through to `ClaimTypes.NameIdentifier`, and yields the pairwise `sub` hash —
+`oid` misses, falls through to `ClaimTypes.NameIdentifier`, and yields the pairwise `sub` hash,
 which the admin centre cannot resolve to a user. Export succeeds; attribution is blank. This is
 the most common cause of "telemetry works but the admin centre shows nothing".
 
@@ -89,7 +89,7 @@ the most common cause of "telemetry works but the admin centre shows nothing".
 
 ---
 
-## Chain 2 — Custom engine OBO (one call, configured not coded)
+## Chain 2: Custom engine OBO (one call, configured not coded)
 
 There is no chain in your code. One call:
 
@@ -104,7 +104,7 @@ Three details in that command are load-bearing:
 
 | Detail | Why |
 | --- | --- |
-| A **named** scope, e.g. `.../Agent365.Observability.OtelWrite` | `/.default` yields `401 InvalidAudience` — delegated tokens carry scopes, not roles |
+| A **named** scope, e.g. `.../Agent365.Observability.OtelWrite` | `/.default` yields `401 InvalidAudience`: delegated tokens carry scopes, not roles |
 | `tokenExchangeUrl = api://botid-<bot-app-client-id>` | Keeps Teams SSO silent |
 | `--client-id` = the **bot app** | This is what makes the resulting `azp` the bot app |
 
@@ -121,7 +121,7 @@ This was established empirically rather than assumed. One token, tried against t
 | Blueprint | `403` |
 | **Bot app** | **`415`** |
 
-`415` is the pass — authorised, wrong content type for the probe. Authorisation had already
+`415` is the pass: authorised, wrong content type for the probe. Authorisation had already
 succeeded, which is what the probe was testing.
 
 ### Do not use the S2S endpoint here
@@ -131,7 +131,7 @@ service-to-service route takes application tokens only and refuses a delegated o
 
 ---
 
-## Chain 3 — AI Teammate (deferred, not fetched)
+## Chain 3: AI Teammate (deferred, not fetched)
 
 The teammate does not acquire a token up front. It registers *the means* to acquire one:
 
@@ -180,15 +180,15 @@ points the wrong way, not because it is hard to survive.
 | `401 InvalidAudience` | `/.default` where a named scope was needed, or S2S route with a delegated token |
 | `AADSTS82001` | Client-credentials requested for an agentic app |
 | `Partitioned into 0 identity groups` | No baggage scope was set |
-| `Partitioned into 2 identity groups` | Two agent ids in one turn — half the turn is silently dropped |
+| `Partitioned into 2 identity groups` | Two agent ids in one turn, half the turn is silently dropped |
 | `HTTP 200`, admin centre empty | Not an auth problem. Look at the `invoke_agent` span |
 
 That last row is worth stating plainly: **`HTTP 200` with an empty `partialSuccess` is not proof of
 ingestion.** Defender's `CloudAppEvents` ingests every operation, but the M365 admin centre ingests
 `invoke_agent` rows only, and reads caller identity off that span. "Defender yes, admin centre no"
-always points at the `invoke_agent` span — never at export plumbing.
+always points at the `invoke_agent` span, never at export plumbing.
 
-Source: [Observability concepts — where your data shows
+Source: [Observability concepts: where your data shows
 up](https://learn.microsoft.com/microsoft-agent-365/developer/observability-concepts#where-your-data-shows-up)
 
 ---
