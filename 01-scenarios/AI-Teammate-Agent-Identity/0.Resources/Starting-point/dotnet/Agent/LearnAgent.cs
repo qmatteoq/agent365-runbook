@@ -3,6 +3,7 @@ using Microsoft.Agents.Builder;
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace LearnTeammateAgent.Agent;
 
@@ -27,6 +28,7 @@ public class LearnAgent : AgentApplication
         AgentApplicationOptions options,
         AIAgent agent,
         ConversationSessionStore sessions,
+        IConfiguration configuration,
         ILogger<LearnAgent> logger) : base(options)
     {
         _agent = agent;
@@ -35,7 +37,23 @@ public class LearnAgent : AgentApplication
 
         OnConversationUpdate(ConversationUpdateEvents.MembersAdded, WelcomeAsync);
         OnMessage("/reset", ResetAsync);
-        OnActivity(ActivityTypes.Message, OnMessageAsync, rank: RouteRank.Last);
+
+        // The message route is registered twice, once for agentic turns and once for everything
+        // else, and each one is given its auto sign-in handler. Auto sign-in is what runs the
+        // sign-in flow for the turn, and that is what later lets Agent 365 observability exchange
+        // a token. Register a single bare route instead and the agent still answers, but the
+        // exporter silently has no token and nothing ever reaches Agent 365. Both arrays are empty
+        // until Phase 1 writes the handler names, which is why this is harmless in Phase 0.
+        var agenticAuthHandlerName = configuration["AgentApplication:AgenticAuthHandlerName"];
+        var oboAuthHandlerName = configuration["AgentApplication:OboAuthHandlerName"];
+
+        string[] agenticHandlers = string.IsNullOrWhiteSpace(agenticAuthHandlerName) ? [] : [agenticAuthHandlerName];
+        string[] oboHandlers = string.IsNullOrWhiteSpace(oboAuthHandlerName) ? [] : [oboAuthHandlerName];
+
+        OnActivity(ActivityTypes.Message, OnMessageAsync,
+            isAgenticOnly: true, autoSignInHandlers: agenticHandlers, rank: RouteRank.Last);
+        OnActivity(ActivityTypes.Message, OnMessageAsync,
+            isAgenticOnly: false, autoSignInHandlers: oboHandlers, rank: RouteRank.Last);
     }
 
     private static async Task WelcomeAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
