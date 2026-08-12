@@ -6,15 +6,30 @@ import path from "node:path";
 import express from "express";
 
 import { LearnAgent } from "./agent.js";
+import { AuthRequiredError, AuthService } from "./auth.js";
 import { settings } from "./config.js";
 
 const PUBLIC_DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "public");
 
 const agent = new LearnAgent(settings);
+const authService = settings.entraSignInEnabled ? new AuthService(settings) : undefined;
 
 const app = express();
 app.use(express.json());
 app.use("/static", express.static(PUBLIC_DIR));
+
+if (authService) {
+    app.use(authService.router);
+    console.info(`Entra sign-in is configured; requesting user tokens for ${settings.agentBlueprintScope}.`);
+} else {
+    console.info(
+        "Entra sign-in is not configured; running anonymously. Fill in the AZURE_AD settings in .env to enable it.",
+    );
+
+    app.get("/api/me", (_req, res) => {
+        res.json({ authenticationConfigured: false, authenticated: false, user: null });
+    });
+}
 
 app.get("/", (_req, res) => {
     // The file is resolved relative to `root` so that a dot-prefixed folder anywhere in the
@@ -36,6 +51,21 @@ app.post("/api/chat", async (req, res) => {
     if (typeof sessionId !== "string" || !sessionId || typeof message !== "string" || !message) {
         res.status(400).json({ reply: "Both session_id and message are required." });
         return;
+    }
+
+    if (authService) {
+        try {
+            await authService.acquireUserAssertion(req);
+        } catch (error) {
+            if (error instanceof AuthRequiredError) {
+                res.status(401).json({ reply: error.message });
+                return;
+            }
+
+            console.error("Could not acquire the user assertion", error);
+            res.status(401).json({ reply: "Sign in before chatting with the agent." });
+            return;
+        }
     }
 
     try {
