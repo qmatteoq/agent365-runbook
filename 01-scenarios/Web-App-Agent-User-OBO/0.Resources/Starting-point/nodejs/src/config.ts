@@ -43,6 +43,24 @@ export interface Settings {
 
     learnMcpEndpoint: string;
 
+    azureAdTenantId?: string;
+    azureAdClientId?: string;
+    azureAdClientSecret?: string;
+    azureAdRedirectUri: string;
+
+    /**
+     * Agent blueprint app id, written by the Agent 365 CLI. The environment variable keeps the
+     * name the Agent 365 tooling uses, so one file serves both the sign-in and the
+     * instrumentation the runbook adds later.
+     */
+    agentBlueprintId?: string;
+
+    /** True only when every value the sign-in needs is present. */
+    readonly entraSignInEnabled: boolean;
+
+    /** The scope the sign-in asks for, derived from the blueprint id. */
+    readonly agentBlueprintScope: string;
+
     host: string;
     port: number;
 }
@@ -55,6 +73,33 @@ export const settings: Settings = {
     azureOpenAiTenantId: optional("AZURE_OPENAI_TENANT_ID"),
     azureOpenAiUseManagedIdentity: optional("AZURE_OPENAI_USE_MANAGED_IDENTITY")?.toLowerCase() === "true",
     learnMcpEndpoint: optional("LEARN_MCP_ENDPOINT") ?? "https://learn.microsoft.com/api/mcp",
-    host: optional("HOST") ?? "127.0.0.1",
+
+    azureAdTenantId: optional("AZURE_AD_TENANT_ID"),
+    azureAdClientId: optional("AZURE_AD_CLIENT_ID"),
+    azureAdClientSecret: optional("AZURE_AD_CLIENT_SECRET"),
+    azureAdRedirectUri: optional("AZURE_AD_REDIRECT_URI") ?? "http://localhost:8000/signin-oidc",
+    agentBlueprintId: optional("AGENTS365OBSERVABILITY__AGENTBLUEPRINTID"),
+
+    get entraSignInEnabled(): boolean {
+        return [
+            this.azureAdTenantId,
+            this.azureAdClientId,
+            this.azureAdClientSecret,
+            this.azureAdRedirectUri,
+            this.agentBlueprintId,
+        ].every((value) => Boolean(value?.trim()));
+    },
+
+    get agentBlueprintScope(): string {
+        const blueprintId = this.agentBlueprintId?.trim();
+
+        if (!blueprintId) {
+            throw new Error("The agent blueprint id is not configured.");
+        }
+
+        return `api://${blueprintId}/access_agent_as_user`;
+    },
+
+    host: optional("HOST") ?? "localhost",
     port: Number(optional("PORT") ?? 8000),
 };

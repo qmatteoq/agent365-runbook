@@ -8,8 +8,8 @@ A Microsoft ecosystem research assistant built with **LangChain (Python)**, **Az
 official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), served as a small
 **FastAPI** web app with a chat page.
 
-It is the Python counterpart of the [.NET starting point](../dotnet/): same behaviour, same system
-prompt, same Azure OpenAI deployment, different stack.
+It is the Python counterpart of the [.NET](../dotnet/) and [Node.js](../nodejs/) starting points:
+same behaviour, same system prompt, same Azure OpenAI deployment, different stack.
 
 The app already includes Microsoft Entra sign-in, but it stays dormant until we configure it. That
 matters because Phase 0 asks us to run the sample before the Agent 365 blueprint exists. With the

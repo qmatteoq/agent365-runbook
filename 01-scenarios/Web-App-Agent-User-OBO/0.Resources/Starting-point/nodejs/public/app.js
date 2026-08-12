@@ -5,6 +5,7 @@ const inputEl = document.getElementById("input");
 const sendEl = document.getElementById("send");
 const resetEl = document.getElementById("reset");
 const statusEl = document.getElementById("status");
+const authStatusEl = document.getElementById("auth-status");
 
 let sessionId = crypto.randomUUID();
 let thinkingEl = null;
@@ -59,6 +60,10 @@ formEl.addEventListener("submit", async (event) => {
             body: JSON.stringify({ session_id: sessionId, message }),
         });
 
+        if (response.status === 401) {
+            throw new Error("Sign in before chatting with the agent. Use the sign-in link above.");
+        }
+
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const data = await response.json();
@@ -88,4 +93,23 @@ fetch("/api/info")
     })
     .catch(() => {
         statusEl.textContent = "";
+    });
+
+fetch("/api/me")
+    .then((response) => response.json())
+    .then((me) => {
+        if (!me.authenticationConfigured) {
+            authStatusEl.textContent = "Running anonymously. Configure Entra sign-in to request a user assertion for Agent 365.";
+            return;
+        }
+
+        if (me.authenticated) {
+            const user = me.user?.username || me.user?.name || "signed-in user";
+            authStatusEl.innerHTML = `Signed in as ${user}. <a href="/signout">Sign out</a>`;
+        } else {
+            authStatusEl.innerHTML = `Sign-in is configured. <a href="/signin">Sign in</a> to chat with the agent.`;
+        }
+    })
+    .catch(() => {
+        authStatusEl.textContent = "";
     });
