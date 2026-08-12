@@ -8,6 +8,7 @@ body { margin: 0; background: #fff; }
 }
 
 .subtitle { color: #666; font-size: 0.9rem; }
+.auth { color: #555; font-size: 0.9rem; }
 .status { color: #999; font-size: 0.8rem; min-height: 1.2em; }
 .empty { color: #999; font-style: italic; }
 

@@ -11,10 +11,12 @@ official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), serv
 It is the Python counterpart of the [.NET starting point](../dotnet/): same behaviour, same system
 prompt, same Azure OpenAI deployment, different stack.
 
-There's no authentication in it either: open the app and you're talking to the agent, anonymously.
-That's intentional. The OBO path needs a user token addressed to the agent blueprint, and the
-blueprint doesn't exist until the runbook registers it, so the sign-in is added in **Step 1-4**
-rather than shipped here.
+The app already includes Microsoft Entra sign-in, but it stays dormant until we configure it. That
+matters because Phase 0 asks us to run the sample before the Agent 365 blueprint exists. With the
+Entra settings blank, the chat page runs anonymously. After the runbook creates the app registration
+and the blueprint, we fill in the settings and the same app starts requiring sign-in. At that point
+it asks Entra for a token scoped to `api://<blueprint-app-id>/access_agent_as_user`, which is the
+first user token in the OBO chain.
 
 ## Prerequisites
 
@@ -48,6 +50,13 @@ Copy-Item .env.example .env
 | `AZURE_OPENAI_TENANT_ID` | Tenant that owns the resource, see below |
 | `AZURE_OPENAI_USE_MANAGED_IDENTITY` | `false` locally, `true` when hosted on Azure |
 | `LEARN_MCP_ENDPOINT` | Microsoft Learn MCP server, streamable HTTP |
+| `AZURE_AD_TENANT_ID` | Tenant that owns the web app registration |
+| `AZURE_AD_CLIENT_ID` | Client id of the web app registration |
+| `AZURE_AD_CLIENT_SECRET` | Client secret for the web app registration |
+| `AZURE_AD_REDIRECT_URI` | Redirect URI registered on the web app, defaults to `http://localhost:8000/signin-oidc` |
+| `AGENTS365OBSERVABILITY__AGENTBLUEPRINTID` | Agent blueprint app id written by the Agent 365 CLI |
+| `HOST` | Local host name used by Uvicorn, defaults to `localhost` |
+| `PORT` | Local port used by Uvicorn, defaults to `8000` |
 
 `.env` is gitignored.
 
@@ -55,10 +64,30 @@ Copy-Item .env.example .env
 happily hand back a token from whichever tenant it last used, and Azure OpenAI then answers
 `HTTP 400 Tenant provided in token does not match resource token`. Pinning the tenant avoids it.
 
+The sign-in settings use the same decision point as Azure OpenAI authentication: if the required
+values are blank, the app runs anonymously. If `AZURE_AD_TENANT_ID`, `AZURE_AD_CLIENT_ID`,
+`AZURE_AD_CLIENT_SECRET`, `AZURE_AD_REDIRECT_URI` and `AGENTS365OBSERVABILITY__AGENTBLUEPRINTID` all
+have values, the app mounts `/signin`, `/signin-oidc`, `/signout` and `/api/me`, then requires a
+signed-in user for `/api/chat`.
+
+When the runbook asks us to create the Entra app registration, we add this redirect URI:
+
+```text
+http://localhost:8000/signin-oidc
+```
+
+That URI matches the sample's default host. We use `localhost` rather than `127.0.0.1` because the
+browser treats them as different origins. If we browse to `127.0.0.1` but Entra redirects to
+`localhost`, the session cookie created before sign-in is not sent back on the callback, and the app
+looks as if it lost the sign-in session.
+
+> Keep the host name and redirect URI aligned when you change either value. If you set `HOST` to
+> `127.0.0.1`, also register and configure `AZURE_AD_REDIRECT_URI` with `127.0.0.1`.
+
 ## Running
 
 Open **this folder** in VS Code and press <kbd>F5</kbd>. That syncs dependencies, starts the app
-with the debugger attached, and opens the browser on <http://127.0.0.1:8000>.
+with the debugger attached, and opens the browser on <http://localhost:8000>.
 
 From a terminal instead:
 
@@ -66,15 +95,24 @@ From a terminal instead:
 uv run python -m app.main
 ```
 
+The command starts the FastAPI host with the settings in `.env`. On startup, the log tells us whether
+Entra sign-in is disabled and the app is anonymous, or enabled and requesting the Agent 365 blueprint
+scope.
+
 ## How it works
 
 ```
 app/
   config.py           settings from .env
+  auth.py             optional Entra sign-in + server-side session store
   agent.py            the agent: Learn MCP tools + Azure OpenAI + conversation memory
-  main.py             FastAPI host, /api/chat and /api/info
+  main.py             FastAPI host, /api/chat, /api/info and optional auth routes
   static/             the chat page
 ```
+
+The layout keeps sign-in separate from the agent code. That way the Learn MCP tooling, Azure OpenAI
+model setup and conversation memory stay the same whether the sample is running anonymously or with
+Entra sign-in enabled.
 
 - **Tools.** `MultiServerMCPClient` connects to the Learn MCP server over streamable HTTP once at
   startup and discovers its tools (`microsoft_docs_search`, `microsoft_code_sample_search`,
@@ -88,6 +126,10 @@ app/
 - **Authentication.** `AzureCliCredential` locally, `DefaultAzureCredential` when
   `AZURE_OPENAI_USE_MANAGED_IDENTITY` is `true`. There is no IMDS endpoint on a laptop, so managed
   identity is skipped entirely rather than attempted and caught.
+- **User sign-in.** `msal.ConfidentialClientApplication` drives the authorization code flow when the
+  Entra settings are complete. The app stores MSAL's flow dictionary server-side, keeps only an
+  opaque session id in an HTTP-only cookie, and later uses `acquire_user_assertion()` to return the
+  blueprint-scoped access token for the signed-in user.
 
 ## Notes on the dependencies
 
@@ -110,8 +152,10 @@ This is not needed on x64 Windows, macOS or Linux.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing, and of sign-in. Onboarding (agent identity,
-blueprint, Entra sign-in, observability) is what the runbook adds.
+This starting point is still free of Agent 365 instrumentation. The web app sign-in hook is in place
+for the user OBO path, ready for the moment the runbook has created the blueprint and the Entra app
+registration. We can run the sample anonymously at first, then turn on sign-in by filling in the
+Entra settings without changing the code.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
