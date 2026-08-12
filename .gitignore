@@ -14,6 +14,10 @@ venv/
 
 # Node
 node_modules/
+dist/
+
+# Teams app packages are built from appPackage/ by build-app-package.ps1
+appPackage.zip
 
 # Secrets and local configuration - never commit these
 .env

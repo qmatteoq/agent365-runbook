@@ -1,0 +1,34 @@
+{
+  "name": "learn-mcp-teams-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Microsoft Learn research agent for Teams - Microsoft 365 Agents SDK + LangChain (TypeScript) + Azure OpenAI + Microsoft Learn MCP",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@azure/identity": "^4.13.1",
+    "@langchain/core": "^1.2.4",
+    "@langchain/langgraph": "^1.4.9",
+    "@langchain/mcp-adapters": "^1.1.3",
+    "@langchain/openai": "^1.5.5",
+    "@microsoft/agents-hosting": "^1.7.2",
+    "@microsoft/agents-hosting-express": "^1.7.2",
+    "dotenv": "^17.4.2",
+    "langchain": "^1.5.4"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.23.7",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20.10.0"
+  }
+}
