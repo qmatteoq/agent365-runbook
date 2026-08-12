@@ -703,6 +703,7 @@ dependencies = [
     { name = "langchain-openai" },
     { name = "langgraph" },
     { name = "mcp" },
+    { name = "msal" },
     { name = "pydantic-settings" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -716,6 +717,7 @@ requires-dist = [
     { name = "langchain-openai", specifier = ">=1.4.1" },
     { name = "langgraph", specifier = ">=1.2.10" },
     { name = "mcp", specifier = "<2" },
+    { name = "msal", specifier = ">=1.34.0" },
     { name = "pydantic-settings", specifier = ">=2.14.2" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.0" },
 ]

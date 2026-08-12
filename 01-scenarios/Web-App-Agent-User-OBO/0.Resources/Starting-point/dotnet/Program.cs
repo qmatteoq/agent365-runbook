@@ -1,8 +1,12 @@
 using Azure.AI.OpenAI;
 using Azure.Identity;
+using LearnMcpAgent;
 using LearnMcpAgent.Components;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.UI;
 using ModelContextProtocol.Client;
 using OpenAI.Chat;
 using System.ClientModel;
@@ -11,6 +15,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var entraSignIn = Agent365SignInOptions.FromConfiguration(builder.Configuration);
+builder.Services.AddSingleton(entraSignIn);
+
+if (entraSignIn.IsEnabled)
+{
+    builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+        .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection(Agent365SignInOptions.AzureAdSectionName))
+        .EnableTokenAcquisitionToCallDownstreamApi([entraSignIn.AgentUserScope])
+        .AddInMemoryTokenCaches();
+
+    builder.Services.AddAuthorization();
+    builder.Services.AddCascadingAuthenticationState();
+    builder.Services.AddMicrosoftIdentityConsentHandler();
+    builder.Services.AddControllersWithViews()
+        .AddMicrosoftIdentityUI();
+}
 
 var aoaiEndpoint = builder.Configuration["AzureOpenAI:Endpoint"]
     ?? throw new InvalidOperationException("AzureOpenAI:Endpoint is not configured.");
@@ -80,6 +101,15 @@ builder.Services.AddSingleton<AIAgent>(sp =>
 
 var app = builder.Build();
 
+if (entraSignIn.IsEnabled)
+{
+    app.Logger.LogInformation("Entra sign-in is configured; requesting {Scope} for the signed-in user.", entraSignIn.AgentUserScope);
+}
+else
+{
+    app.Logger.LogInformation("Entra sign-in is not configured; running anonymously. Fill in AzureAd and Agent365Observability to enable it.");
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -88,10 +118,27 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+if (entraSignIn.IsEnabled)
+{
+    app.UseAuthentication();
+    app.UseAuthorization();
+}
+
 app.UseAntiforgery();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>()
+
+if (entraSignIn.IsEnabled)
+{
+    app.MapControllers();
+}
+
+var razorComponents = app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+if (entraSignIn.IsEnabled)
+{
+    razorComponents.RequireAuthorization();
+}
 
 app.Run();

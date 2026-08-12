@@ -8,7 +8,7 @@ agent that is subtly wrong.
 This page records those, so you can recognise them rather than debug them from scratch.
 
 > **How to read this.** Each entry says what the skill does, why it's a problem, and what to do
-> instead. None of these are reasons to avoid the skills — they are reasons to check one specific
+> instead. None of these are reasons to avoid the skills. They are reasons to check one specific
 > thing before moving on.
 
 ---
@@ -18,7 +18,7 @@ This page records those, so you can recognise them rather than debug them from s
 **Applies to:** Teams / Microsoft 365 Copilot agents reached through their own bot registration.
 
 **What the skill does.** Phase 0.5 offers exactly two auth modes for a non-AI-Teammate agent:
-`obo` and `s2s`. It treats `obo` as the *agentic* on-behalf-of path — the one where the turn
+`obo` and `s2s`. It treats `obo` as the *agentic* on-behalf-of path, the one where the turn
 arrives already carrying an agentic identity.
 
 **Why that's a problem.** A Teams agent reached through its own bot app registration carries **no**
@@ -31,7 +31,7 @@ to a service-principal chain you don't want either.
 attribution in the Microsoft 365 admin center doesn't match what you expect.
 
 **What to do.** For Teams-hosted agents, follow
-[Teams Agent — Custom Engine OBO](../01-scenarios/Teams-Agent-Custom-Engine-OBO/) rather than the
+[Teams Agent: Custom Engine OBO](../01-scenarios/Teams-Agent-Custom-Engine-OBO/) rather than the
 skill's default, and check the token chain the skill generated against it before running.
 
 **Not affected.** The web-app user-OBO scenario. There, `obo` is the correct answer and the skill
@@ -57,8 +57,8 @@ correct behaviour, not a bug.
 **Symptom.** A `critical` or `high` finding telling you the identity binding is wrong, on an agent
 whose telemetry is in fact arriving and attributed correctly.
 
-**What to do.** On an OBO path, verify the *outcome* — does activity appear, attributed to the
-right agent, in the admin center? — before acting on this finding. If it does, the finding is a
+**What to do.** On an OBO path, verify the *outcome* before acting on this finding. Does activity appear, attributed to the
+right agent, in the admin center? If it does, the finding is a
 false positive. Do not rewrite a working token chain to satisfy it.
 
 ---
@@ -71,7 +71,7 @@ false positive. Do not rewrite a working token chain to satisfy it.
 your LLM library, then continues.
 
 **Why that's a problem.** It's easy to read the warning as advisory and move on. It isn't. Without
-auto-instrumentation you get an `invoke_agent` span and no `chat` spans — the agent looks
+auto-instrumentation you get an `invoke_agent` span and no `chat` spans. The agent looks
 instrumented, and half its telemetry is missing.
 
 **What to do.** On a soft-warned stack, plan to wrap every LLM call in `InferenceScope` manually,
@@ -86,7 +86,7 @@ and verify you see `chat` spans in Phase 4 rather than assuming them.
 **What the skill does.** It wires `use_microsoft_opentelemetry(...)` into your entry point.
 
 **Why that's a problem.** The distro can only patch libraries that haven't been imported yet. If
-your entry point imports the agent module — and therefore LangChain — before calling the distro,
+your entry point imports the agent module, and therefore LangChain, before calling the distro,
 patching silently doesn't happen. Nothing errors.
 
 **What to do.** Call the distro at the very top of your entry point, before any agent import, and
@@ -113,7 +113,7 @@ that never leave the process, with no error to tell you.
 **What the skill's reference says.** That `UseMicrosoftOpenTelemetry` registers
 `IExporterTokenCache<AgenticTokenStruct>` as part of its own wiring.
 
-**What actually happens.** It does not — verified against `Microsoft.OpenTelemetry` 1.0.7. You must
+**What actually happens.** It does not. We verified this against `Microsoft.OpenTelemetry` 1.0.7. You must
 register it yourself:
 
 ```csharp
@@ -136,10 +136,10 @@ confusing rather than obvious.
 **Applies to:** .NET agents using `BaggageBuilder.FromTurnContext`.
 
 **What it does.** Supplies `user.id`, `user.name`, `microsoft.channel.name` and the conversation id
-from the activity — genuinely convenient.
+from the activity, which is genuinely convenient.
 
 **Why that's a problem.** It **also** writes `gen_ai.agent.id`, from `Recipient.AgenticAppId`. If
-your agent resolves its id some other way — as an AI Teammate does, from the agentic instance id —
+your agent resolves its id some other way, as an AI Teammate does, from the agentic instance id,
 then whichever call comes last wins, because `BaggageBuilder` keeps a single dictionary.
 
 **Symptom.** The agent id is right in ordinary chat turns and wrong on email-triggered ones. Easy to
@@ -153,6 +153,6 @@ non-chat turn rather than only in Teams chat.
 ## Reporting
 
 If you hit a gap that isn't listed here, it's worth raising at
-https://github.com/microsoft/agent365-skills — the skills improve quickly, and several entries on
+https://github.com/microsoft/agent365-skills. The skills improve quickly, and several entries on
 this page may be obsolete by the time you read them. Check the dates against the skill version you
 have installed.

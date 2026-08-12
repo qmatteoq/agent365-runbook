@@ -6,12 +6,13 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from app.agent import LearnAgent
+from app.auth import AuthRequiredError, AuthService
 from app.config import settings
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -20,10 +21,20 @@ logger = logging.getLogger("learn-agent")
 STATIC_DIR = Path(__file__).parent / "static"
 
 agent = LearnAgent(settings)
+auth_service = AuthService(settings) if settings.entra_sign_in_enabled else None
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    if auth_service:
+        logger.info(
+            "Entra sign-in is configured; requesting user tokens for %s.",
+            settings.agent_blueprint_scope,
+        )
+    else:
+        logger.info(
+            "Entra sign-in is not configured; running anonymously. Fill in the AzureAd settings in .env to enable it."
+        )
     # Connect to the Microsoft Learn MCP server and discover its tools once at startup,
     # so every chat turn reuses the same tool list.
     await agent.start()
@@ -33,6 +44,8 @@ async def lifespan(_: FastAPI):
 
 app = FastAPI(title="Microsoft Learn Agent", lifespan=lifespan)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+if auth_service:
+    app.include_router(auth_service.router)
 
 
 class ChatRequest(BaseModel):
@@ -58,8 +71,28 @@ async def info() -> dict[str, object]:
     }
 
 
+if not auth_service:
+
+    @app.get("/api/me")
+    async def me() -> dict[str, object]:
+        return {
+            "authenticationConfigured": False,
+            "authenticated": False,
+            "user": None,
+        }
+
+
 @app.post("/api/chat")
-async def chat(request: ChatRequest) -> ChatResponse:
+async def chat(request: ChatRequest, http_request: Request) -> ChatResponse:
+    if auth_service:
+        try:
+            auth_service.acquire_user_assertion(http_request)
+        except AuthRequiredError as error:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=str(error),
+            ) from error
+
     try:
         reply = await agent.ask(request.session_id, request.message)
     except Exception:

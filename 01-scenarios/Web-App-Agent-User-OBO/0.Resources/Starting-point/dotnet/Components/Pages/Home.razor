@@ -1,7 +1,11 @@
 @page "/"
 @rendermode InteractiveServer
 @using Microsoft.Agents.AI
+@using Microsoft.Identity.Client
+@using Microsoft.Identity.Web
 @inject AIAgent Agent
+@inject Agent365SignInOptions SignInOptions
+@inject IServiceProvider Services
 @implements IAsyncDisposable
 
 <PageTitle>Microsoft Learn Agent</PageTitle>
@@ -53,6 +57,9 @@
 </style>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private readonly List<ChatEntry> _messages = new();
     private AgentSession? _session;
     private string _input = string.Empty;
@@ -61,6 +68,51 @@
     protected override async Task OnInitializedAsync()
     {
         _session = await Agent.CreateSessionAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || !SignInOptions.IsEnabled || AuthenticationStateTask is null)
+        {
+            return;
+        }
+
+        var authenticationState = await AuthenticationStateTask;
+        if (authenticationState.User.Identity?.IsAuthenticated != true)
+        {
+            return;
+        }
+
+        // The auth cookie survives an app restart because Data Protection keys persist on disk, but
+        // the in-memory MSAL token cache does not. Probe once so the next chat turn is not the first
+        // place where a missing cached token sends the user back through sign-in.
+        _ = await AcquireUserAssertionAsync();
+    }
+
+    public async Task<string> AcquireUserAssertionAsync()
+    {
+        if (!SignInOptions.IsEnabled)
+        {
+            throw new InvalidOperationException("Entra sign-in is not configured.");
+        }
+
+        try
+        {
+            var tokenAcquisition = Services.GetRequiredService<ITokenAcquisition>();
+            return await tokenAcquisition.GetAccessTokenForUserAsync([SignInOptions.AgentUserScope]);
+        }
+        catch (MsalUiRequiredException ex)
+        {
+            Services.GetRequiredService<MicrosoftIdentityConsentAndConditionalAccessHandler>()
+                .HandleException(ex);
+            return string.Empty;
+        }
+        catch (MicrosoftIdentityWebChallengeUserException ex)
+        {
+            Services.GetRequiredService<MicrosoftIdentityConsentAndConditionalAccessHandler>()
+                .HandleException(ex);
+            return string.Empty;
+        }
     }
 
     private async Task SendAsync()

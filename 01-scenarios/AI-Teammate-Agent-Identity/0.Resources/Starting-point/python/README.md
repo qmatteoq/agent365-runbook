@@ -1,8 +1,8 @@
-# Starting point — Python + LangChain, AI Teammate
+# Starting point: Python + LangChain, AI Teammate
 
 > This is the **un-instrumented starting point** for the
-> [AI Teammate — Agent Identity](../../../3.Runbook.md) scenario. It has no Agent 365 code in it
-> at all. That is deliberate — the runbook walks you through adding it.
+> [AI Teammate: Agent Identity](../../../3.Runbook.md) scenario. It has no Agent 365 code in it
+> at all. That is deliberate. The runbook walks you through adding it.
 
 A research agent for the Microsoft ecosystem, grounded in the official
 [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp). It answers questions about
@@ -10,7 +10,7 @@ Azure, Microsoft 365, Power Platform, .NET, Entra, Copilot and Dynamics 365, and
 documentation it used.
 
 Functionally it is the same agent as the
-[Teams starting point](../../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/python/) —
+[Teams starting point](../../../../Teams-Agent-Custom-Engine-OBO/0.Resources/Starting-point/python/),
 same stack, same system prompt. The difference is entirely in **how it gets onboarded**: this one
 becomes an **AI Teammate**, so it acts under its **own identity** (the Agentic User) rather than
 on behalf of the signed-in user.
@@ -24,7 +24,7 @@ on behalf of the signed-in user.
 | Model | Azure OpenAI (`gpt-4.1`) |
 | Tools | Microsoft Learn MCP server |
 
-> This is the **plain** agent — no Agent 365 registration, observability or Work IQ tools.
+> This is the **plain** agent, no Agent 365 registration, observability or Work IQ tools.
 > You apply the onboarding afterwards.
 
 ## How it fits together
@@ -54,7 +54,7 @@ This is the biggest structural difference from `python-agent-teams`, and it is d
 
 An AI Teammate's messaging endpoint is registered **on the blueprint**, not on an Azure Bot
 resource. `a365 setup all --aiteammate --m365` calls the MCP Platform `createAgentBlueprint`
-endpoint, which proxies Teams Graph and sets the bot `callbackUri` — the same value the Teams
+endpoint, which proxies Teams Graph and sets the bot `callbackUri`, the same value the Teams
 Developer Portal shows as **Notification URL**. When the endpoint changes later:
 
 ```powershell
@@ -63,7 +63,7 @@ a365 setup blueprint --endpoint-only --messaging-endpoint <url>
 
 `--endpoint-only` skips blueprint creation and re-registers just the endpoint. `--update-endpoint <url>`
 does the same job as part of a fuller blueprint run, so both flags are real. `--m365` is not needed
-here on CLI 1.1.214 — the command takes the Teams Graph path on its own.
+here on CLI 1.1.214. The command takes the Teams Graph path on its own.
 
 Because there is no separate bot channel app, none of `python-agent-teams`' identity gotchas
 apply here:
@@ -71,13 +71,13 @@ apply here:
 | `python-agent-teams` | This agent |
 |---|---|
 | Bot channel app + blueprint, kept strictly separate | Blueprint only |
-| Blueprint can't sign channel replies (`AADSTS82001`) | Not applicable — no channel app to sign as |
+| Blueprint can't sign channel replies (`AADSTS82001`) | Not applicable, no channel app to sign as |
 | `a365 setup all` overwrites the bot credentials in place | No bot credentials to overwrite |
 | Observability exported on behalf of the signed-in user | Exported as the Agentic User |
 
 There is also no `appPackage/` and no `build-app-package.ps1`. The Agent 365 CLI owns the Teams
-manifest for an AI Teammate — `a365 setup all --aiteammate` and `a365 publish` generate and stamp
-it — so it must not be hand-written.
+manifest for an AI Teammate: `a365 setup all --aiteammate` and `a365 publish` generate and stamp
+it, so it must not be hand-written.
 
 ## Configuration
 
@@ -93,7 +93,7 @@ CONNECTIONS__SERVICE_CONNECTION__SETTINGS__TENANTID=
 CONNECTIONS__SERVICE_CONNECTION__SETTINGS__ANONYMOUS_ALLOWED=true
 ```
 
-The three credential keys are empty on purpose — onboarding fills them in. They still have to be
+The three credential keys are empty on purpose. Onboarding fills them in. They still have to be
 **present**, though. The Python `MsalConnectionManager` looks for a `SERVICE_CONNECTION` entry and
 raises `ValueError: No service connection configuration provided.` when it finds nothing at all.
 This is one of the places where the Python SDK is stricter than .NET, which only logs
@@ -106,7 +106,7 @@ how the Agents Playground reaches it before onboarding. It is the Python equival
 Everything else (Azure OpenAI, the MCP endpoint, the port) is ordinary application configuration
 bound by `pydantic-settings`.
 
-Azure OpenAI is reached with `AzureCliCredential` locally — run `az login` first — or with a
+Azure OpenAI is reached with `AzureCliCredential` locally (run `az login` first), or with a
 managed identity when `AZURE_OPENAI_USE_MANAGED_IDENTITY=true` on Azure. Setting
 `AZURE_OPENAI_API_KEY` switches to key auth instead; leave it blank to use Entra credentials,
 which is the recommended path and the only one available where keys are disabled by policy.
@@ -165,10 +165,10 @@ the adapter tries to build a real user token client, and the request fails with
 
 **JWT validation is scoped to the messaging endpoint.** The Agents SDK sample registers
 `jwt_authorization_middleware` application-wide, which rejects every request that has no
-`Authorization` header — including health probes. Here it is applied to `POST /api/messages` only.
+`Authorization` header, including health probes. Here it is applied to `POST /api/messages` only.
 
 **The dev tunnel url is not derived from the tunnel name.** The url is only printed while the
-tunnel is being hosted — read it, don't guess it. A *named* tunnel keeps its url across restarts,
+tunnel is being hosted; read it, don't guess it. A *named* tunnel keeps its url across restarts,
 which is what lets the registered messaging endpoint stay valid; an anonymous tunnel hands out a
 new url every run and silently breaks the channel.
 
@@ -183,8 +183,8 @@ concurrent first turns wait for a single handshake instead of racing several.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing. Turning it into an AI Teammate — blueprint,
-observability, Work IQ — is what the runbook does.
+This agent is intentionally free of Agent 365 plumbing. Turning it into an AI Teammate, with blueprint,
+observability and Work IQ, is what the runbook does.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
@@ -197,4 +197,4 @@ Some gotchas worth knowing before you start, all hit in practice:
   therefore be **20 characters or fewer**.
 - Reaching Teams requires a tenant admin to approve an agent instance from
   `https://admin.cloud.microsoft/#/agents/all/requested`. That is asynchronous and can take minutes
-  to hours — plan for it rather than assuming something has failed.
+  to hours, so plan for it rather than assuming something has failed.

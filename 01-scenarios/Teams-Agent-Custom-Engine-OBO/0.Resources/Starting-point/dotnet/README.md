@@ -1,11 +1,11 @@
-# Starting point — .NET Agent Framework, Teams / M365 Copilot
+# Starting point: .NET Agent Framework, Teams / M365 Copilot
 
 > This is the **un-instrumented starting point** for the
-> [Teams Agent — Custom Engine OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in
-> it at all. That is deliberate — the runbook walks you through adding it.
+> [Teams Agent: Custom Engine OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in
+> it at all. That is deliberate. The runbook walks you through adding it.
 
-A research agent that answers questions about the Microsoft ecosystem — Azure, Microsoft 365, Power
-Platform, .NET, Microsoft Entra, Copilot, Dynamics 365 — grounding every answer in the official
+A research agent that answers questions about the Microsoft ecosystem: Azure, Microsoft 365, Power
+Platform, .NET, Microsoft Entra, Copilot, Dynamics 365, grounding every answer in the official
 Microsoft Learn documentation through the [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp).
 
 It is the same agent as the [web app starting point](../../../../Web-App-Agent-User-OBO/0.Resources/Starting-point/dotnet/),
@@ -27,7 +27,7 @@ in Microsoft Teams and Microsoft 365 Copilot.
 - .NET 10 SDK
 - Access to the Azure OpenAI resource configured in `appsettings.json`, with the
   **Cognitive Services OpenAI User** role. Authentication defaults to `DefaultAzureCredential`,
-  so `az login` locally is enough. Key auth is supported as an alternative — set it with
+  so `az login` locally is enough. Key auth is supported as an alternative. Set it with
   `dotnet user-secrets set "AzureOpenAI:ApiKey" "<key>"` or `AzureOpenAI__ApiKey`, never in the
   committed `appsettings.json`.
 - Node.js (only for the Agents Playground)
@@ -68,7 +68,7 @@ Then:
 
 1. **Create an Azure Bot** (Azure Portal → *Azure Bot*), single-tenant or multi-tenant, and note its
    app ID and secret.
-2. **Expose the agent publicly** — for local debugging, `devtunnel host -p 3978 --allow-anonymous` and
+2. **Expose the agent publicly**: for local debugging, `devtunnel host -p 3978 --allow-anonymous` and
    set the bot's messaging endpoint to `https://<tunnel>/api/messages`.
 3. **Enable the Microsoft Teams channel** on the bot.
 4. **Fill in `appsettings.json`** → `TokenValidation.Audiences` and `Connections.ServiceConnection.Settings.ClientId`
@@ -103,8 +103,8 @@ scopes, the same package also surfaces the agent inside Microsoft 365 Copilot.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing. Onboarding — blueprint, observability,
-Work IQ — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing. The runbook adds onboarding: blueprint, observability,
+and Work IQ.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 

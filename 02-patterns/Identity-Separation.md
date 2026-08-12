@@ -19,7 +19,7 @@ blueprint are two separate app registrations with two separate client ids and tw
 
 ## Why it cannot be collapsed
 
-Not a convention or a recommendation — two independent platform constraints, either of which is
+Not a convention or a recommendation. Two independent platform constraints, either of which is
 sufficient on its own.
 
 ### 1. A blueprint cannot get a client-credentials token
@@ -73,7 +73,7 @@ This is what makes it dangerous rather than merely wrong.
 `a365 setup all` **overwrites the bot channel credentials in your `.env` with the blueprint's**, and
 replaces the bot secret in place. Two consequences:
 
-1. **The original secret is unrecoverable.** It is not moved aside — it is overwritten. If you did
+1. **The original secret is unrecoverable.** It is not moved aside. It is overwritten. If you did
    not back it up, you regenerate it in the Azure portal.
 2. **Nothing breaks immediately.** The running process already holds the old values in memory and
    keeps working. The failure appears at the *next restart*, which may be hours later and will not
@@ -87,7 +87,7 @@ Back up the file first:
 Copy-Item .env .env.backup-before-a365-setup
 ```
 
-Then, after setup completes, restore the bot channel credentials — the ones under
+Then, after setup completes, restore the bot channel credentials, the ones under
 `CONNECTIONS__SERVICE_CONNECTION__SETTINGS__` for Python, or `Connections:ServiceConnection` for
 .NET. The blueprint values that `a365 setup all` wrote belong in the Agent 365 configuration, not
 in the channel connection.
@@ -111,7 +111,7 @@ A quick reference for the Teams case, where the confusion is worst:
 | `microsoft.a365.agent.blueprint.id` | Blueprint |
 
 That `gen_ai.agent.id` is the bot app rather than the blueprint surprises people. The reasoning is
-in [The Three Token Chains](The-Three-Token-Chains.md) — the short version is that the agent id
+in [The Three Token Chains](The-Three-Token-Chains.md). The short version is that the agent id
 must match the `azp` of the token you export with, and in this path that token is the bot app's.
 
 ---

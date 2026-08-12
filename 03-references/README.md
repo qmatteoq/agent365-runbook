@@ -8,7 +8,7 @@ Troubleshooting, known gaps, and the environment-specific traps that cost the mo
 | --- | --- | --- |
 | Troubleshooting | Diagnosing telemetry that doesn't arrive, wrong attribution, and export failures | 🚧 Planned |
 | [Known Skill Gaps](Known-Skill-Gaps.md) | Where the Agent 365 Skills do the wrong thing, and how to correct it | ✅ Written |
-| Environment Gotchas | Platform-specific problems — Windows on ARM, dev tunnels, credential overwrites | 🚧 Planned |
+| Environment Gotchas | Platform-specific problems: Windows on ARM, dev tunnels, credential overwrites | 🚧 Planned |
 
 ## Why "Known Skill Gaps" exists
 
@@ -18,7 +18,7 @@ don't find out until you're debugging production telemetry.
 
 Where we hit a gap building the reference agents, we record it here with: what we asked for, what
 the skill produced, why it was wrong, and what to do instead. These are point-in-time observations
-against a preview product — re-verify before assuming a gap still exists.
+against a preview product. Re-verify before assuming a gap still exists.
 
 ## Useful resources
 

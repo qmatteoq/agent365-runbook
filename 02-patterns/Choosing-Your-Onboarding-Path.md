@@ -4,7 +4,7 @@ Agent 365 onboarding is not one procedure with variations. There are three genui
 paths, and the choice determines your token chain, your Entra registrations, and what the admin
 centre can attribute your agent's activity to.
 
-Choosing wrong is expensive. It is not a setting you flip later — it changes which identity is the
+Choosing wrong is expensive. It is not a setting you flip later. It changes which identity is the
 acting principal, and identity is baked into how the telemetry is partitioned and stored.
 
 ---
@@ -22,7 +22,7 @@ Everything else follows from the answer.
 | The agent itself, as a principal with its own identity | **AI Teammate** | [AI Teammate](../01-scenarios/AI-Teammate-Agent-Identity/) |
 
 The first two look similar and are not. The difference is not "web versus Teams" as a matter of
-taste — it is that a Teams turn carries no agentic identity, so the agent has no credential of its
+taste. It is that a Teams turn carries no agentic identity, so the agent has no credential of its
 own to present. That single fact changes the token chain and the agent id. See
 [The Three Token Chains](The-Three-Token-Chains.md).
 
@@ -48,7 +48,7 @@ flowchart TD
 
 Ordered roughly by effort.
 
-### Custom engine agent OBO — least code
+### Custom engine agent OBO: least code
 
 You configure an Azure Bot OAuth connection and the Bot Framework Token Service performs the OBO
 exchange server-side. Your agent makes **one call** and receives a token.
@@ -60,26 +60,26 @@ at runtime rather than a compile error.
 **Choose it when** your agent lives in Teams or M365 Copilot and always acts for the user who
 messaged it.
 
-### User OBO — most code, most control
+### User OBO: most code, most control
 
 You build the two-hop chain yourself. Nothing hides it from you, which means nothing hides the
 failure modes either.
 
 You also need **two Entra app registrations**: an ordinary one to sign the user in, and the agent
 blueprint. Entra bars agentic apps from interactive authorization flows, so the blueprint cannot
-sign users in — see [Identity Separation](Identity-Separation.md).
+sign users in. See [Identity Separation](Identity-Separation.md).
 
 **Choose it when** the agent is your own web app and you want the user's own permissions to bound
 what it can reach.
 
-### AI Teammate — most capability, most moving parts
+### AI Teammate: most capability, most moving parts
 
 The agent becomes a principal. It gets an Entra Agent ID, can be assigned work, can receive mail,
 and appears in the admin centre as an entity in its own right rather than as an action a user took.
 
 The cost is that it is no longer a proxy. There is no delegated user authority capping what it can
 do, so its permissions have to be reasoned about directly. Onboarding also involves an
-**asynchronous approval step** — an administrator approves each instance, and that approval is not
+**asynchronous approval step**: an administrator approves each instance, and that approval is not
 instantaneous.
 
 **Choose it when** the agent does work that isn't a response to a user's message: scheduled runs,
@@ -110,10 +110,10 @@ The symptoms are specific enough to be diagnostic.
 
 | Symptom | Likely mismatch |
 | --- | --- |
-| `HTTP 403` from the observability endpoint | The agent id doesn't match the token's `azp` — wrong path for your identity |
+| `HTTP 403` from the observability endpoint | The agent id doesn't match the token's `azp`. Wrong path for your identity |
 | `AADSTS82001` | You asked a blueprint for a client-credentials token; blueprints can't do that |
 | Spans export cleanly, admin centre stays empty | The `invoke_agent` span is missing or its caller identity is unresolvable |
-| `Partitioned into 2 identity groups` | Two different agent ids in one turn — usually a half-migrated path |
+| `Partitioned into 2 identity groups` | Two different agent ids in one turn, usually a half-migrated path |
 | `401 InvalidAudience` on a delegated token | The S2S route was used with a user token |
 
 The last one is worth internalising: the service-to-service export route accepts application
@@ -124,5 +124,5 @@ amount of correct instrumentation compensates.
 
 ## Next
 
-- [Identity Separation](Identity-Separation.md) — why the hosting app and the blueprint cannot be the same principal
-- [The Three Token Chains](The-Three-Token-Chains.md) — what each path actually acquires
+- [Identity Separation](Identity-Separation.md): why the hosting app and the blueprint cannot be the same principal
+- [The Three Token Chains](The-Three-Token-Chains.md): what each path actually acquires

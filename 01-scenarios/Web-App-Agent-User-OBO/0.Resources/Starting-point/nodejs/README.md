@@ -1,8 +1,8 @@
-# Starting point — Node.js + LangChain, Express web app
+# Starting point: Node.js + LangChain, Express web app
 
 > This is the **un-instrumented starting point** for the
-> [Web App Agent — User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
-> That is deliberate — the runbook walks you through adding it.
+> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
+> That is deliberate, the runbook walks you through adding it.
 
 A Microsoft ecosystem research assistant built with **LangChain (TypeScript)**, **Azure OpenAI** and
 the official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), served as a small
@@ -17,7 +17,7 @@ The Microsoft Agent Framework ships for .NET, Python and Go, so there is no Java
 build of it to use. That leaves the choice of framework up to us, and the
 `instrument-observability` skill narrows it considerably: it auto-instruments LangChain, the OpenAI
 Agents SDK and the Claude Agent SDK on Node, and only soft-warns for Semantic Kernel and Google ADK.
-Picking LangChain means Phase 2 of the runbook gives us `chat` spans without hand-writing an
+Picking LangChain means the observability phase of the runbook gives us `chat` spans without hand-writing an
 `InferenceScope` around every model call, and it keeps this sample a close sibling of the Python one.
 
 ## Prerequisites
@@ -71,7 +71,7 @@ npm start
 ```
 
 `npm run dev` does the same thing with `tsx watch`, restarting on every file change. There is no
-build step in either case — `tsx` runs the TypeScript directly. `npm run build` is there for when
+build step in either case, `tsx` runs the TypeScript directly. `npm run build` is there for when
 you want a compiled `dist/` to deploy.
 
 ## How it works
@@ -112,17 +112,17 @@ Python sample across, because `langchain-mcp-adapters` on Python spells the same
 
 `res.sendFile` is called with a `root` option rather than one absolute path. That looks fussy, but
 `send` treats any dot-prefixed segment of the path it is given as a hidden file and refuses to serve
-it — so if you clone this repo into a folder like `C:\Users\you\.tools\`, an absolute path turns
+it, so if you clone this repo into a folder like `C:\Users\you\.tools\`, an absolute path turns
 every page load into a 404 with nothing obviously wrong. Scoping the lookup to `root` limits the
 dotfile check to `index.html`, where it belongs.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing. Onboarding — agent identity, blueprint,
-observability — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing. Onboarding (agent identity, blueprint,
+observability) is what the runbook adds.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
-When you reach Phase 2, note that the runbook's Python warning about initialisation order applies
+When you reach the observability phase, note that the runbook's Python warning about initialisation order applies
 here too: the observability distro patches libraries as they load, so the
 `useMicrosoftOpenTelemetry()` call has to come before `src/agent.ts` is imported.
