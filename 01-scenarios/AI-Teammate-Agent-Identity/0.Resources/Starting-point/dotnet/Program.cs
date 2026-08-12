@@ -60,7 +60,10 @@ builder.Services.AddSingleton<AIAgent>(sp =>
             TenantId = string.IsNullOrWhiteSpace(aoaiTenantId) ? null : aoaiTenantId,
             // There is no IMDS endpoint locally; ManagedIdentityCredential can throw a fatal
             // AuthenticationFailedException that aborts the chain before the az CLI / VS credential.
-            ExcludeManagedIdentityCredential = builder.Environment.IsDevelopment(),
+            // Keyed off actually being hosted on Azure rather than off the environment name, because
+            // Step 2-9 has us running locally as Production to exercise the agentic path.
+            ExcludeManagedIdentityCredential = string.IsNullOrEmpty(
+                Environment.GetEnvironmentVariable("WEBSITE_INSTANCE_ID")),
         });
 
         azureClient = new AzureOpenAIClient(new Uri(aoaiEndpoint), credential);

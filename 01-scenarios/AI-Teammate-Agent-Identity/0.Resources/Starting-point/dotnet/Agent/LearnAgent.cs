@@ -70,7 +70,12 @@ public class LearnAgent : AgentApplication
         }
 
         // Researching on Microsoft Learn takes a few seconds, so keep the channel from timing out.
-        await turnContext.SendActivityAsync(new Activity { Type = ActivityTypes.Typing }, cancellationToken);
+        // The agentic channel accepts only 'event' and 'message' activities and rejects a typing
+        // indicator with HTTP 400, so only send one when we're not on an agentic turn.
+        if (!turnContext.Activity.IsAgenticRequest())
+        {
+            await turnContext.SendActivityAsync(new Activity { Type = ActivityTypes.Typing }, cancellationToken);
+        }
 
         try
         {
