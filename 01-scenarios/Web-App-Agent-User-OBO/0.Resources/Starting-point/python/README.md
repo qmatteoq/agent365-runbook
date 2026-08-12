@@ -11,6 +11,11 @@ official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), serv
 It is the Python counterpart of the [.NET starting point](../dotnet/): same behaviour, same system
 prompt, same Azure OpenAI deployment, different stack.
 
+There's no authentication in it either: open the app and you're talking to the agent, anonymously.
+That's intentional. The OBO path needs a user token addressed to the agent blueprint, and the
+blueprint doesn't exist until the runbook registers it, so the sign-in is added in **Step 1-4**
+rather than shipped here.
+
 ## Prerequisites
 
 - [uv](https://docs.astral.sh/uv/) — dependency management and the runner
@@ -105,8 +110,8 @@ This is not needed on x64 Windows, macOS or Linux.
 
 ## Next step
 
-This agent is intentionally free of Agent 365 plumbing. Onboarding — agent identity, blueprint,
-observability — is what the runbook adds.
+This agent is intentionally free of Agent 365 plumbing — and of sign-in. Onboarding — agent identity,
+blueprint, Entra sign-in, observability — is what the runbook adds.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
