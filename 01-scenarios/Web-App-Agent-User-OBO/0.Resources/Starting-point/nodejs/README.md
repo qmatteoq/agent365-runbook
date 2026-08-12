@@ -17,7 +17,7 @@ The Microsoft Agent Framework ships for .NET, Python and Go, so there is no Java
 build of it to use. That leaves the choice of framework up to us, and the
 `instrument-observability` skill narrows it considerably: it auto-instruments LangChain, the OpenAI
 Agents SDK and the Claude Agent SDK on Node, and only soft-warns for Semantic Kernel and Google ADK.
-Picking LangChain means Phase 2 of the runbook gives us `chat` spans without hand-writing an
+Picking LangChain means the observability phase of the runbook gives us `chat` spans without hand-writing an
 `InferenceScope` around every model call, and it keeps this sample a close sibling of the Python one.
 
 ## Prerequisites
@@ -123,6 +123,6 @@ observability) is what the runbook adds.
 
 ➡️ **[Go to the runbook](../../../3.Runbook.md)**
 
-When you reach Phase 2, note that the runbook's Python warning about initialisation order applies
+When you reach the observability phase, note that the runbook's Python warning about initialisation order applies
 here too: the observability distro patches libraries as they load, so the
 `useMicrosoftOpenTelemetry()` call has to come before `src/agent.ts` is imported.
