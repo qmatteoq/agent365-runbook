@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // F5 installs dependencies, brings the dev tunnel up, then starts the agent on the port
+      // the tunnel forwards to. Once it is listening, message it from Teams as usual.
+      //
+      // tsx runs the TypeScript directly, so there is no build step to wait for and no dist/
+      // folder to keep in step with the sources.
+      "name": "Run Learn Teams agent (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "console": "integratedTerminal",
+      "preLaunchTask": "start agent prerequisites",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
