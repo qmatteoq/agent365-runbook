@@ -89,8 +89,9 @@ mail-triggered work, or anything where "which user asked for this?" has no sensi
 
 ## Things that are not reasons to choose
 
-**"We're a .NET shop, so we'll take the .NET path."** Stack and path are independent. Two of the
-three scenarios ship both a .NET and a Python starting point precisely to make that clear.
+**"We're a .NET shop, so we'll take the .NET path."** Stack and path are independent. Every
+scenario ships the same agent in more than one language, two of them in .NET, Python and Node.js,
+precisely to make that clear.
 
 **"AI Teammate is the newest, so it must be the most advanced."** It's the right answer for
 autonomous work and the wrong one for an agent that should only ever act within a user's

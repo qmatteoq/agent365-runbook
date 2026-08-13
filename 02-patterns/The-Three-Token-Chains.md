@@ -84,8 +84,11 @@ audience will not work as the assertion in hop 2.
 which the admin centre cannot resolve to a user. Export succeeds; attribution is blank. This is
 the most common cause of "telemetry works but the admin centre shows nothing".
 
-> **Python note.** MSAL Python supports `fmi_path` natively on `acquire_token_for_client`
-> (verified on MSAL 1.37), so hop 1 does not need to be hand-rolled there.
+> **A note on MSAL.** Hop 1 does not always need to be hand-rolled. MSAL Python supports
+> `fmi_path` natively on `acquire_token_for_client` (verified on MSAL 1.37), and `@azure/msal-node`
+> version 5 has both halves, `fmiPath` on the client-credential request and
+> `acquireTokenOnBehalfOf` for hop 2. The raw form posts above work everywhere and are what the
+> runbooks show, because they match what you would write in any language.
 
 ---
 

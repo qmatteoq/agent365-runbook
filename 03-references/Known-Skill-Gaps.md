@@ -81,16 +81,24 @@ and verify you see `chat` spans in Phase 4 rather than assuming them.
 
 ## 4. Initialisation order isn't enforced
 
-**Applies to:** Python.
+**Applies to:** Python and Node.js.
 
-**What the skill does.** It wires `use_microsoft_opentelemetry(...)` into your entry point.
+**What the skill does.** It wires `use_microsoft_opentelemetry(...)` or
+`useMicrosoftOpenTelemetry(...)` into your entry point.
 
 **Why that's a problem.** The distro can only patch libraries that haven't been imported yet. If
 your entry point imports the agent module, and therefore LangChain, before calling the distro,
 patching silently doesn't happen. Nothing errors.
 
-**What to do.** Call the distro at the very top of your entry point, before any agent import, and
-confirm `chat` spans appear.
+On Node.js this is sharper than it looks, because you cannot fix it by moving the call up the file.
+ES module imports are all evaluated before any of the importing module's own statements run, so a
+`useMicrosoftOpenTelemetry()` call sitting at the top of `main.ts` still executes after every
+`import` in that file has already loaded LangChain.
+
+**What to do.** On Python, call the distro at the very top of your entry point, above any agent
+import. On Node.js, put the call in its own module, `src/observability.ts`, and make importing that
+module the first line of your entry point. Either way, confirm `chat` spans appear rather than
+assuming them.
 
 ---
 
@@ -98,9 +106,10 @@ confirm `chat` spans appear.
 
 **Applies to:** all stacks.
 
-`enable_a365` / `EnableA365` registers the span processors. `a365_enable_observability_exporter` /
-`EnableAgent365Exporter` ships the spans. Setting only the first produces correctly-shaped spans
-that never leave the process, with no error to tell you.
+`enable_a365` / `EnableA365` / `a365.enabled` registers the span processors.
+`a365_enable_observability_exporter` / `EnableAgent365Exporter` / `a365.enableObservabilityExporter`
+ships the spans. Setting only the first produces correctly-shaped spans that never leave the
+process, with no error to tell you.
 
 **What to do.** Check both are set, in code rather than only in environment variables.
 
