@@ -88,9 +88,9 @@ Copy-Item .env .env.backup-before-a365-setup
 ```
 
 Then, after setup completes, restore the bot channel credentials, the ones under
-`CONNECTIONS__SERVICE_CONNECTION__SETTINGS__` for Python, or `Connections:ServiceConnection` for
-.NET. The blueprint values that `a365 setup all` wrote belong in the Agent 365 configuration, not
-in the channel connection.
+`CONNECTIONS__SERVICE_CONNECTION__SETTINGS__` on Python, `Connections__ServiceConnection__Settings__`
+on Node.js, or `Connections:ServiceConnection` on .NET. The blueprint values that `a365 setup all`
+wrote belong in the Agent 365 configuration, not in the channel connection.
 
 > Verify by restarting the agent and sending one message. In-memory state hides this bug; only a
 > restart proves it.
