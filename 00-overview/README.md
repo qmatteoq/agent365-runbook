@@ -16,7 +16,7 @@ An agent already reasons, calls tools and answers questions. Onboarding it in Ag
 You do not need all four. The runbooks are phased so you can stop after any one of them and still
 have a working, valid agent.
 
-## The one decision that shapes everything: whose identity acts?
+## The key decision: whose identity acts?
 
 Every other choice follows from this. When your agent calls Microsoft Graph, or writes a telemetry
 span, some identity is doing it. 
@@ -71,4 +71,3 @@ Per-scenario prerequisites are listed in each runbook's Phase 0.
 | Agent 365 developer documentation | https://learn.microsoft.com/microsoft-agent-365/ |
 | Agent 365 Skills repository | https://github.com/microsoft/agent365-skills |
 | Agent 365 Skills announcement | https://techcommunity.microsoft.com/blog/agent-365-blog/agent-365-skills-bring-your-agents-into-microsoft-agent-365-in-minutes/4529838 |
-| Fully instrumented reference agents | https://github.com/qmatteoq/agent365-demos |

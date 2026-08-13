@@ -37,33 +37,7 @@ skill's default, and check the token chain the skill generated against it before
 **Not affected.** The web-app user-OBO scenario. There, `obo` is the correct answer and the skill
 does the right thing.
 
----
-
-## 2. `a365-code-validator` applies an S2S rule to OBO code
-
-**Applies to:** any agent on an OBO path.
-
-**What the skill does.** The validator checks that the principal on the observability token matches
-the runtime agent identity, and flags a mismatch as a blocker:
-
-```text
-token azp/appid == route /agents/{agentId} == span gen_ai.agent.id
-```
-
-**Why that's a problem.** That rule is **S2S-specific**. On an OBO path the export route is keyed
-by the calling app, and the service resolves it back to the registered agent. A "mismatch" there is
-correct behaviour, not a bug.
-
-**Symptom.** A `critical` or `high` finding telling you the identity binding is wrong, on an agent
-whose telemetry is in fact arriving and attributed correctly.
-
-**What to do.** On an OBO path, verify the *outcome* before acting on this finding. Does activity appear, attributed to the
-right agent, in the admin center? If it does, the finding is a
-false positive. Do not rewrite a working token chain to satisfy it.
-
----
-
-## 3. LangChain is soft-warned, and it matters
+## 2. LangChain is soft-warned, and it matters
 
 **Applies to:** Python + LangChain, Node.js + Semantic Kernel or Google ADK.
 
@@ -156,12 +130,3 @@ miss, because the common path looks correct.
 
 **What to do.** Chain your explicit `.AgentId()` **after** `.FromTurnContext()`, and verify on a
 non-chat turn rather than only in Teams chat.
-
----
-
-## Reporting
-
-If you hit a gap that isn't listed here, it's worth raising at
-https://github.com/microsoft/agent365-skills. The skills improve quickly, and several entries on
-this page may be obsolete by the time you read them. Check the dates against the skill version you
-have installed.

@@ -1,0 +1,34 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Phase 0. The agent runs anonymously, so nothing has to be registered yet and no
+      // tunnel is needed: the Microsoft 365 Agents Playground posts straight to localhost.
+      //
+      // tsx runs the TypeScript directly, so there is no build step to wait for and no dist/
+      // folder to keep in step with the sources.
+      "name": "Playground (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "console": "integratedTerminal",
+      "preLaunchTask": "install dependencies",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      // Phase 1 onward. Once the blueprint holds a messaging endpoint, Teams reaches the
+      // agent through the dev tunnel, so the tunnel has to be up before the agent starts.
+      "name": "Teams, via dev tunnel (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "console": "integratedTerminal",
+      "preLaunchTask": "start agent prerequisites",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ]
+}
