@@ -199,5 +199,4 @@ up](https://learn.microsoft.com/microsoft-agent-365/developer/observability-conc
 ## Related
 
 - [Choosing Your Onboarding Path](Choosing-Your-Onboarding-Path.md)
-- [Identity Separation](Identity-Separation.md)
 - [Known Skill Gaps](../03-references/Known-Skill-Gaps.md)
