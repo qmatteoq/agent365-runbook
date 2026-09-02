@@ -31,6 +31,16 @@ Full instructions, including how to verify the install: [Installing the Skills](
 
 That matters for a few reasons. You need to review the changes before they reach production, and to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture, which we document where we found it, you need to know enough to correct it.
 
+## If you don't have a coding assistant
+
+Not every team has GitHub Copilot, Claude Code or an equivalent, and not every team is allowed to point one at its codebase. So scenarios also carry a **manual runbook**, which covers the same ground with every command typed and every file written by hand. There are no prompts in it anywhere, and it assumes no assistant is running.
+
+| Scenario | Manual runbook |
+| --- | --- |
+| [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | [3.Runbook-Manual.md](01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+
+The two guides land in the same place, so you can also read the manual one as the reference for what the skills produced, which is useful when you're reviewing a generated diff or repairing one.
+
 ## Scenarios
 
 | Scenario | Onboarding path | Stacks | Hosting |
@@ -62,6 +72,7 @@ Each scenario folder follows the same layout:
 ├── 1.Overview.md            ← what this scenario is and who it is for
 ├── 2.Architecture.md        ← how the pieces fit, and the token flow
 ├── 3.Runbook.md             ← the step-by-step onboarding guide
+├── 3.Runbook-Manual.md      ← the same guide with no coding assistant involved
 └── 4.Sample-prompts.md      ← prompts to exercise the finished agent
 ```
 
