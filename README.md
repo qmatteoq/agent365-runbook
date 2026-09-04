@@ -38,8 +38,9 @@ Not every team has GitHub Copilot, Claude Code or an equivalent, and not every t
 | Scenario | Manual runbook |
 | --- | --- |
 | [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | [3.Runbook-Manual.md](01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| [Teams Agent: Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | [3.Runbook-Manual.md](01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) |
 
-The two guides land in the same place, so you can also read the manual one as the reference for what the skills produced, which is useful when you're reviewing a generated diff or repairing one.
+The two guides land in the same place, so you can also read the manual one as the reference for what the skills produced, which is useful when you're reviewing a generated diff or repairing one. The manual runbooks also don't assume you started from the starting point in this repository: each step says what it needs from your own agent before showing how the sample does it.
 
 ## Scenarios
 
