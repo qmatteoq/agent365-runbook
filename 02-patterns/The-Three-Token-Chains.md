@@ -1,10 +1,12 @@
-# The Three Token Chains
+# Token chains by onboarding path
 
 Each onboarding path acquires its observability token differently. This is the densest part of
 Agent 365 onboarding and the part where a small mistake produces the most confusing symptom, so it
 is worth understanding rather than copying.
 
-Everything here comes from working implementations, not from documentation.
+The OBO and AI teammate sections describe the implementations used by the existing runbooks. The S2S
+section follows the current Microsoft protocol documentation; that scenario ships
+un-instrumented .NET, Python and Node.js starting points, so tenant token acquisition is part of its onboarding exercise.
 
 ---
 
@@ -27,6 +29,7 @@ nothing in the admin centre.
 | User OBO | The **agent identity** app id | The chain makes the agent identity the acting principal |
 | Custom engine OBO | The **bot app registration** client id | The turn carries no agentic identity, so the agent has no credential to make itself the `azp` |
 | AI Teammate | The **agentic instance** id | Each installed teammate is a distinct instance; the blueprint rolls activity up |
+| Service-to-service | The **agent identity app id** | The blueprint exchange authenticates the child using application permissions |
 
 ---
 
@@ -175,21 +178,59 @@ points the wrong way, not because it is hard to survive.
 
 ---
 
-## Failure signatures, all three chains
+## Chain 4: Service-to-service (app-only child identity)
+
+The middleware's incoming token authorizes the webhook call. We don't exchange it for an agent
+token or forward it downstream. The agent authenticates separately, using its blueprint's
+credential to obtain an assertion for the child, then using that assertion in a resource request.
+
+```text
+Blueprint -> Entra:
+    client_id = blueprint client ID
+    grant_type = client_credentials
+    scope = api://AzureADTokenExchange/.default
+    fmi_path = agent identity client ID
+    credential = blueprint secret, certificate or federated assertion
+
+Agent identity -> Entra:
+    client_id = agent identity client ID
+    grant_type = client_credentials
+    client_assertion = first exchange token
+    client_assertion_type = urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+    scope = resource/.default
+```
+
+These are the two exchanges after obtaining the blueprint credential. A managed identity
+assertion adds a credential-acquisition step before them. There is no user `assertion` and no
+`requested_token_use=on_behalf_of`. The final access token carries application `roles`.
+
+Use the child client ID for `gen_ai.agent.id` and the export route, not its service principal
+object ID. Set `UseS2SEndpoint = true` and supply the custom token resolver described in the
+[S2S authentication recipe](https://learn.microsoft.com/microsoft-agent-365/developer/observability-authentication-setup#agent-365-enabled-using-s2s).
+That recipe currently uses `api://9b975845-388f-4429-889e-eab1ef63949c/.default`.
+
+The [S2S runbook](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) covers the separate
+webhook registration, caller app role, agent permission and operational telemetry. An ordinary
+non-agentic service principal can use direct client credentials, but that isn't the
+blueprint-derived identity path used in this scenario.
+
+---
+
+## Failure signatures
 
 | Signature | Meaning |
 | --- | --- |
 | `HTTP 403` on export | `azp` and agent id disagree |
 | `401 InvalidAudience` | `/.default` where a named scope was needed, or S2S route with a delegated token |
-| `AADSTS82001` | Client-credentials requested for an agentic app |
+| `AADSTS82001` | Direct resource client credentials used where the blueprint-to-child exchange is required |
 | `Partitioned into 0 identity groups` | No baggage scope was set |
 | `Partitioned into 2 identity groups` | Two agent ids in one turn, half the turn is silently dropped |
-| `HTTP 200`, admin centre empty | Not an auth problem. Look at the `invoke_agent` span |
+| `HTTP 200`, admin centre empty | Export acceptance doesn't prove activity ingestion; check the invocation, identity and tenant eligibility |
 
-That last row is worth stating plainly: **`HTTP 200` with an empty `partialSuccess` is not proof of
-ingestion.** Defender's `CloudAppEvents` ingests every operation, but the M365 admin centre ingests
-`invoke_agent` rows only, and reads caller identity off that span. "Defender yes, admin centre no"
-always points at the `invoke_agent` span, never at export plumbing.
+An `HTTP 200` with an empty `partialSuccess` isn't proof of activity ingestion. The M365 admin
+centre consumes semantic invocation records, so an HTTP or model span alone isn't enough.
+Check the invocation and its identity attributes, then confirm the tenant's prerequisites.
+For S2S, preserve the caller service's attribution without inventing a human user.
 
 Source: [Observability concepts: where your data shows
 up](https://learn.microsoft.com/microsoft-agent-365/developer/observability-concepts#where-your-data-shows-up)
