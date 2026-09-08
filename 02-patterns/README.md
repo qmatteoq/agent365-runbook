@@ -7,6 +7,5 @@ it links here rather than repeating it.
 
 | Pattern | What it covers | Status |
 | --- | --- | --- |
-| [Choosing Your Onboarding Path](Choosing-Your-Onboarding-Path.md) | How to decide between user OBO, custom engine agent OBO, and agent identity | ✅ Written |
-| [The Three Token Chains](The-Three-Token-Chains.md) | What token each path acquires, from which authority, for which audience | ✅ Written |
-
+| [Choosing Your Onboarding Path](Choosing-Your-Onboarding-Path.md) | How to decide between user OBO, custom engine OBO, AI teammate and S2S | ✅ Written |
+| [Token chains by onboarding path](The-Three-Token-Chains.md) | What token each path acquires, from which authority, for which audience | ✅ Written |

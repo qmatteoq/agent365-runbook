@@ -25,12 +25,13 @@ span, some identity is doing it.
 | --- | --- | --- |
 | **User OBO** | The signed-in user, delegated to the agent | The agent is a tool a person drives. A web app where the user signs in. |
 | **Custom engine agent OBO** | The user, but obtained via the Teams/M365 channel rather than an interactive sign-in | The agent is hosted in Teams or M365 Copilot and acts for whoever messages it |
-| **Agent identity (AI Teammate)** | The agent itself, as its own directory principal | The agent acts autonomously, or needs to own resources and act when nobody is present |
+| **Agent identity (AI Teammate)** | The agent with its own user account | The agent needs a mailbox, Microsoft 365 presence or user-based resources |
+| **Service-to-service (S2S)** | The agent identity, using application permissions | A webhook, scheduler or another service starts work without a signed-in user |
 
 The path changes which token you acquire, which endpoint you
 export telemetry to, and how activity is attributed in reporting. See
 [Choosing Your Onboarding Path](../02-patterns/Choosing-Your-Onboarding-Path.md) for how to
-decide, and [The Three Token Chains](../02-patterns/The-Three-Token-Chains.md) for what each
+decide, and [Token chains by onboarding path](../02-patterns/The-Three-Token-Chains.md) for what each
 choice commits you to.
 
 ## Where your telemetry ends up
@@ -63,6 +64,10 @@ See [Installing the Skills](Installing-the-Skills.md) for the route that matches
 | The skills | Installed into that assistant. See [Installing the Skills](Installing-the-Skills.md) |
 
 Per-scenario prerequisites are listed in each runbook's Phase 0.
+
+The [S2S starting points](../01-scenarios/Service-to-Service-Agent/1.Overview.md) offer the same tenant-free
+stub mode in .NET, Python and Node.js. Their runtimes use explicit noninteractive credentials when
+we enable a real model; they don't fall back to an operator's `az login` session.
 
 ## Related resources
 

@@ -38,6 +38,7 @@ Not every team has GitHub Copilot, Claude Code or an equivalent, and not every t
 | Scenario | Manual runbook |
 | --- | --- |
 | [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | [3.Runbook-Manual.md](01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| [Service-to-service agent](01-scenarios/Service-to-Service-Agent/1.Overview.md) | [3.Runbook-Manual.md](01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) |
 
 The two guides land in the same place, so you can also read the manual one as the reference for what the skills produced, which is useful when you're reviewing a generated diff or repairing one.
 
@@ -48,6 +49,7 @@ The two guides land in the same place, so you can also read the manual one as th
 | [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | User on-behalf-of | .NET, Python, Node.js | Web app |
 | [Teams Agent: Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET, Python, Node.js | Teams / M365 Copilot |
 | [AI Teammate: Agent Identity](01-scenarios/AI-Teammate-Agent-Identity/) | Agent's own identity | .NET, Python, Node.js | Teams / M365 Copilot |
+| [Service-to-service agent](01-scenarios/Service-to-Service-Agent/1.Overview.md) | App-only S2S, no signed-in user | .NET, Python, Node.js | Webhook (ASP.NET Core / FastAPI / Express) |
 
 Not sure which applies to you? Start with
 [Choosing Your Onboarding Path](02-patterns/Choosing-Your-Onboarding-Path.md), which walks the

@@ -1,0 +1,15 @@
+[project]
+name = "supply-chain-s2s-agent"
+version = "0.1.0"
+description = "A machine-authenticated shipment exception webhook with stub tools."
+requires-python = ">=3.12"
+dependencies = [
+    "azure-identity>=1.25.3",
+    "fastapi>=0.141.1",
+    "httpx>=0.28.1",
+    "langchain-openai>=1.4.1",
+    "pydantic-settings>=2.14.2",
+    "python-dotenv>=1.2.2",
+    "PyJWT[crypto]>=2.10.1",
+    "uvicorn[standard]>=0.52.0",
+]
