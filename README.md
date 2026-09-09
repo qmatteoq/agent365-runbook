@@ -39,6 +39,8 @@ Review generated changes against the scenario's identity and telemetry requireme
 
 The manual runbooks provide the portal steps, CLI commands and source edits without requiring skills or a coding assistant. Choose the manual link for our scenario below; we don't need to read the skill-led guide first.
 
+For registration, authentication or missing activity, use the [troubleshooting guide](03-references/Troubleshooting.md). It covers all four scenarios and both authoring routes, with checks for the running process, token flow and exported spans.
+
 ## Scenarios
 
 | Scenario | Identity and hosting | Skill-led runbook | Manual runbook |

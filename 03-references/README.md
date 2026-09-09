@@ -6,9 +6,13 @@ Troubleshooting, known gaps, and the environment-specific traps that cost the mo
 
 | Reference | What it covers | Status |
 | --- | --- | --- |
+| [Troubleshooting Agent 365 onboarding](Troubleshooting.md) | Symptom-led diagnostics for identity, export, Teams, AI Teammate, S2S and Work IQ, including SDK and local environment issues | Available for both authoring routes |
 | Scenario troubleshooting | Identity, ingestion and host diagnostics in each runbook; links below | Available in all four scenarios |
 | [Known Skill Gaps](Known-Skill-Gaps.md) | Where the Agent 365 Skills do the wrong thing, and how to correct it | ✅ Written |
-| Environment Gotchas | Platform-specific problems: Windows on ARM, dev tunnels, credential overwrites | 🚧 Planned |
+
+Start with the [troubleshooting guide](Troubleshooting.md) when an agent fails at runtime or activity
+is missing. It separates local execution, token acquisition, export and reporting, so we can
+identify the failing layer without recreating the registration.
 
 ## Why "Known Skill Gaps" exists
 
