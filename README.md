@@ -2,11 +2,15 @@
 
 Step-by-step runbooks for bringing **your own** agent into [Microsoft Agent 365](https://learn.microsoft.com/microsoft-agent-365/): identity, observability, Microsoft 365 data access, and messaging.
 
-Each scenario starts from a **working agent that has no Agent 365 code in it at all**, and walks you through onboarding it yourself. You run the steps; you end up with an instrumented agent and an understanding of what changed and why.
+We can onboard our own working agent or use an optional educational sample. All four scenarios have a **skill-led runbook** and a **manual runbook**, with .NET, Python and Node.js examples. The identity path depends on who acts; the choice of a coding assistant does not change it.
 
-## The onboarding path is driven by skills
+## Choose how to work
 
-The primary route through every runbook is the **Agent 365 Skills**, a set of six skills you install into the AI coding assistant you already use, and drive in natural language.
+Use `3.Runbook.md` to work with a coding assistant, or `3.Runbook-Manual.md` to run the CLI and make the source edits ourselves. Both routes cover registration and observability. Work IQ requires separate permissions and runtime tool integration where supported; the S2S scenario does not add it.
+
+### With a coding assistant
+
+The skill-led runbooks use the **Agent 365 Skills**, installed into our chosen assistant:
 
 | Your coding assistant | Install with |
 | --- | --- |
@@ -21,35 +25,28 @@ Full instructions, including how to verify the install: [Installing the Skills](
 | `a365-setup` | Installs the Agent 365 CLI, validates Azure prerequisites, detects your stack, routes you to the right path |
 | `make-a365-agent` | Registers a Blueprint for agents needing observability or catalog visibility, without the messaging layer |
 | `instrument-observability` | Wires OpenTelemetry and the Agent 365 tracing exporter |
-| `add-workiq-tools` | Connects Work IQ MCP servers: Mail, Calendar, Word and more |
+| `add-workiq-tools` | Adds selected Work IQ MCP servers and supported runtime wiring; delegated scenarios only |
 | `make-ai-teammate` | Adds Messaging and Notifications so the agent can receive Teams messages, email and @mentions |
-| `test-local` | Launches the agent alongside AgentsPlayground for local smoke testing |
+| `test-local` | Launches an AI Teammate with AgentsPlayground; S2S uses HTTP requests instead |
 
-**But every runbook also shows you what the skill did.** Each step is structured as:
+The skill-led steps also explain the commands and code behind the automation:
 
 > **What you type** → **what the skill does** → **the CLI commands and SDK code behind it** → **how to verify it worked**
 
-That matters for a few reasons. You need to review the changes before they reach production, and to reproduce them in a pipeline where no coding assistant is running. And when a skill does the wrong thing for your architecture, which we document where we found it, you need to know enough to correct it.
+Review generated changes against the scenario's identity and telemetry requirements before deployment. The [known skill gaps](03-references/Known-Skill-Gaps.md) describe integration details to check.
 
-## If you don't have a coding assistant
+### Without a coding assistant
 
-Not every team has GitHub Copilot, Claude Code or an equivalent, and not every team is allowed to point one at its codebase. So scenarios also carry a **manual runbook**, which covers the same ground with every command typed and every file written by hand. There are no prompts in it anywhere, and it assumes no assistant is running.
-
-| Scenario | Manual runbook |
-| --- | --- |
-| [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | [3.Runbook-Manual.md](01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
-| [Service-to-service agent](01-scenarios/Service-to-Service-Agent/1.Overview.md) | [3.Runbook-Manual.md](01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) |
-
-The two guides land in the same place, so you can also read the manual one as the reference for what the skills produced, which is useful when you're reviewing a generated diff or repairing one.
+The manual runbooks provide the portal steps, CLI commands and source edits without requiring skills or a coding assistant. Choose the manual link for our scenario below; we don't need to read the skill-led guide first.
 
 ## Scenarios
 
-| Scenario | Onboarding path | Stacks | Hosting |
+| Scenario | Identity and hosting | Skill-led runbook | Manual runbook |
 | --- | --- | --- | --- |
-| [Web App Agent: User OBO](01-scenarios/Web-App-Agent-User-OBO/) | User on-behalf-of | .NET, Python, Node.js | Web app |
-| [Teams Agent: Custom Engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET, Python, Node.js | Teams / M365 Copilot |
-| [AI Teammate: Agent Identity](01-scenarios/AI-Teammate-Agent-Identity/) | Agent's own identity | .NET, Python, Node.js | Teams / M365 Copilot |
-| [Service-to-service agent](01-scenarios/Service-to-Service-Agent/1.Overview.md) | App-only S2S, no signed-in user | .NET, Python, Node.js | Webhook (ASP.NET Core / FastAPI / Express) |
+| [Web app: User OBO](01-scenarios/Web-App-Agent-User-OBO/1.Overview.md) | Signed-in user's delegated permissions; web app | [Skill-led](01-scenarios/Web-App-Agent-User-OBO/3.Runbook.md) | [Manual](01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| [Teams: Custom engine OBO](01-scenarios/Teams-Agent-Custom-Engine-OBO/1.Overview.md) | Teams user's delegated permissions; Azure Bot channel | [Skill-led](01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook.md) | [Manual](01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) |
+| [AI Teammate / Autopilot](01-scenarios/AI-Teammate-Agent-Identity/1.Overview.md) | Agent's own user account; Microsoft 365 presence | [Skill-led](01-scenarios/AI-Teammate-Agent-Identity/3.Runbook.md) | [Manual](01-scenarios/AI-Teammate-Agent-Identity/3.Runbook-Manual.md) |
+| [Service-to-service agent](01-scenarios/Service-to-Service-Agent/1.Overview.md) | App-only permissions, no signed-in user; webhook or background work | [Skill-led](01-scenarios/Service-to-Service-Agent/3.Runbook.md) | [Manual](01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) |
 
 Not sure which applies to you? Start with
 [Choosing Your Onboarding Path](02-patterns/Choosing-Your-Onboarding-Path.md), which walks the
@@ -59,8 +56,8 @@ decision and lists what each path costs you.
 
 | Path | Contents |
 | --- | --- |
-| [`00-overview/`](00-overview/) | What Agent 365 onboarding involves, the skills, and the concepts the runbooks assume |
-| [`01-scenarios/`](01-scenarios/) | The runbooks, one folder per scenario, each with its own starting-point code |
+| [`00-overview/`](00-overview/) | Onboarding concepts and the choice between skill-led and manual authoring |
+| [`01-scenarios/`](01-scenarios/) | Four scenarios, each with both runbook paths and optional sample code |
 | [`02-patterns/`](02-patterns/) | Cross-cutting guidance that applies to more than one scenario |
 | [`03-references/`](03-references/) | Troubleshooting, known skill gaps, and environment gotchas |
 
@@ -70,19 +67,22 @@ Each scenario folder follows the same layout:
 <Scenario-Name>/
 ├── 0.Resources/
 │   ├── Images/
-│   └── Starting-point/      ← the un-instrumented agent you begin from
+│   └── Starting-point/      ← optional educational agents without Agent 365 instrumentation
 ├── 1.Overview.md            ← what this scenario is and who it is for
 ├── 2.Architecture.md        ← how the pieces fit, and the token flow
-├── 3.Runbook.md             ← the step-by-step onboarding guide
-├── 3.Runbook-Manual.md      ← the same guide with no coding assistant involved
-└── 4.Sample-prompts.md      ← prompts to exercise the finished agent
+├── 3.Runbook.md             ← skill-led onboarding
+├── 3.Runbook-Manual.md      ← manual registration and instrumentation
+└── 4.Sample-prompts.md      ← chat prompts or S2S HTTP requests for the sample
 ```
 
-## Prerequisites
-The runbooks assume you already have a working agent, or are using one of the starting points here. You will need also the following products and licenses:
+Both runbooks use the same scenario identity model. The sample requests exercise the behavior the chosen implementation actually supports; a stub notification is not a real Teams message.
 
-- An Azure subscription to create a Foundry project
-- A Microsoft 365 tenant with Agent 365 licenses (either standalone or included in the E7 bundle)
+## Prerequisites
+Start with a working agent or an optional sample, then follow the prerequisites in the chosen runbook:
+
+- A Microsoft 365 tenant with Agent 365 enabled, appropriate licensing and permission to register the agent and complete administrator consent.
+- Access to the resources our agent uses. Azure model resources are needed only when using that provider; the S2S samples also have a tenant-free stub mode.
+- The Agent 365 CLI and our application's build tools. A coding assistant and the skills are needed only for the skill-led route.
 
 ## Disclaimer
 
@@ -90,3 +90,7 @@ This repository is a community resource and is not an official Microsoft product
 evolving; commands, scopes and identifiers change. Verify against the
 [official Agent 365 documentation](https://learn.microsoft.com/microsoft-agent-365/) before
 relying on anything here in production.
+
+## Wrapping up
+
+Choose the scenario by its identity requirements, then choose either authoring route. The [scenario index](01-scenarios/README.md) lists the phase order and verification method for each.

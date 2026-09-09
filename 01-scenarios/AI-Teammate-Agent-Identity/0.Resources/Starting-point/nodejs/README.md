@@ -212,14 +212,14 @@ and changed the message shapes it returns. The versions in `package.json` are th
 was written against, so loosening them is the quickest way to get a confusing type error in
 `src/agent.ts`.
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 plumbing. Turning it into an AI Teammate, with
-blueprint, observability and Work IQ, is what the runbook does.
+Choose the [skill-led runbook](../../../3.Runbook.md) or the [manual runbook](../../../3.Runbook-Manual.md)
+for registration, publishing and instrumentation. This sample is optional and educational; both
+guides can be applied to our own agent. The manual path needs no coding assistant and covers Work
+IQ selection and consent, leaving runtime tool integration separate.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
-
-Some gotchas worth knowing before you start, all hit in practice:
+The registration steps have these requirements:
 
 - Omit `--authmode`. `s2s` and `both` are rejected alongside `--aiteammate`; `obo` is accepted but
   warns that it is superfluous, since it is the default for an AI Teammate.

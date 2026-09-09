@@ -1,8 +1,8 @@
 # Starting point: Python + LangChain, FastAPI web app
 
-> This is the **un-instrumented starting point** for the
-> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
-> That is deliberate, the runbook walks you through adding it.
+> This optional educational sample has no Agent 365 instrumentation yet. Use the
+> [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) guide to add it,
+> or apply the same onboarding steps to our own web agent.
 
 A Microsoft ecosystem research assistant built with **LangChain (Python)**, **Azure OpenAI** and the
 official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), served as a small
@@ -150,14 +150,15 @@ uv sync
 
 This is not needed on x64 Windows, macOS or Linux.
 
-## Next step
+## Wrapping up
 
 This starting point is still free of Agent 365 instrumentation. The web app sign-in hook is in place
 for the user OBO path, ready for the moment the runbook has created the blueprint and the Entra app
 registration. We can run the sample anonymously at first, then turn on sign-in by filling in the
 Entra settings without changing the code.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Choose the [skill-led runbook](../../../3.Runbook.md) or the
+[manual runbook](../../../3.Runbook-Manual.md), which requires no coding assistant.
 
 To compare against the finished, fully instrumented version, see
 [`python-agent-no-teams`](https://github.com/qmatteoq/agent365-demos/tree/main/python-agent-no-teams)

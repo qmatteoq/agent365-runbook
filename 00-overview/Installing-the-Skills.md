@@ -1,9 +1,8 @@
 # Installing the Agent 365 Skills
 
-The [Agent 365 Skills](https://github.com/microsoft/agent365-skills) are the primary path through
-these runbooks. They are not tied to a single coding assistant. Pick the section below that matches
-the tool you already use. Whichever route you take, run the install from **your agent project
-directory**, so the skills see the code they are meant to change.
+Install the [Agent 365 Skills](https://github.com/microsoft/agent365-skills) only if we're following a skill-led runbook. All four scenarios also have a complete manual registration and instrumentation path; choose its link in the [scenario index](../01-scenarios/README.md) to work without a coding assistant.
+
+For the skill-led route, choose the section matching our assistant and run installation from our agent's project directory, so the skills see the intended code.
 
 ## Which install route applies to you
 
@@ -27,6 +26,8 @@ Run these inside an active Claude Code session:
 /plugin install agent365@agent365-skills
 ```
 
+The marketplace supplies the plugin, and the second command installs its skills for the assistant.
+
 ## Claude Code CLI
 
 If you installed the plugin from the marketplace as above, the CLI picks it up automatically on
@@ -36,6 +37,8 @@ every `claude` invocation. To load it from a local clone instead:
 cd my-agent-project
 claude --plugin-dir "/path/to/agent365-skills/plugins/agent365"
 ```
+
+This loads the plugin from our local skills checkout for that CLI invocation.
 
 ## GitHub Copilot CLI
 
@@ -50,6 +53,8 @@ session. Verify with `/skills list`, then drive them in natural language:
 Set up Agent 365 for this agent
 Add observability to this agent
 ```
+
+These prompts invoke setup and instrumentation after the assistant has discovered the installed skills.
 
 ## VS Code agent mode and the Copilot coding agent
 
@@ -93,6 +98,15 @@ directory and confirm the tool is reading that directory as its workspace.
 
 ## No coding assistant at all
 
-You do not need one. Every step in every runbook documents the CLI commands and SDK code behind the
-skill, so you can follow the "behind the scenes" and "how to verify" parts and do the work by hand,
-which is also what you'll do when reproducing the onboarding in a pipeline.
+Use the dedicated manual runbook rather than extracting instructions from a skill-led walkthrough:
+
+| Scenario | Manual runbook |
+| --- | --- |
+| Web app, user OBO | [Manual](../01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| Teams, custom engine OBO | [Manual](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) |
+| AI Teammate / Autopilot | [Manual](../01-scenarios/AI-Teammate-Agent-Identity/3.Runbook-Manual.md) |
+| Service-to-service | [Manual](../01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) |
+
+## Wrapping up
+
+With skills installed, continue with the chosen scenario's skill-led guide. On the manual route, skip skill installation and follow its CLI and source-edit instructions directly. S2S uses webhook requests for verification; `test-local` and Agents Playground are for messaging agents.

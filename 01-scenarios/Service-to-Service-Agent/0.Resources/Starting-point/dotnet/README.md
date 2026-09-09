@@ -2,6 +2,8 @@
 
 We're starting with an ASP.NET Core webhook that processes shipment exceptions. It validates a machine caller, reads an order and inventory, produces an operations summary, and invokes notification and ticket tools. The [S2S runbook](../../../3.Runbook.md) adds Agent 365 registration and observability; this project doesn't contain them yet.
 
+This is an optional educational sample. The [skill-led](../../../3.Runbook.md) and [manual](../../../3.Runbook-Manual.md) guides can also be applied to our own app-only agent; neither requires this shipment workflow.
+
 The default is a tenant-free simulation. It uses signed local JWTs and deterministic stub reasoning, with all four tools implemented in memory. Setting `Agent:ReasoningMode` to `AzureOpenAI` enables Microsoft Agent Framework model reasoning, but it doesn't replace the tools or give the process an Agent 365 identity.
 
 ## Run locally
@@ -61,7 +63,7 @@ No credential chain falls back to a developer's Azure CLI session. The runtime u
 
 ## Use Entra at ingress
 
-Follow [Phase 1](../../../3.Runbook.md#phase-1-protect-the-webhook-with-entra) to create the API role and caller assignment. Configure the API to issue v2 tokens and include the `idtyp` access-token claim, then set the real tenant, API audience, and caller map.
+Follow Phase 1 of the [skill-led](../../../3.Runbook.md#phase-1-protect-the-webhook-with-entra) or [manual](../../../3.Runbook-Manual.md#phase-1-protect-the-webhook-with-entra) guide to create the API role and caller assignment. Configure the API to issue v2 tokens and include the `idtyp` access-token claim, then set the real tenant, API audience, and caller map.
 
 ```powershell
 $env:ASPNETCORE_ENVIRONMENT = "Production"
@@ -114,4 +116,4 @@ Application records use `EventName` values such as `ingress.rejected`, `ingress.
 
 ## Wrapping up
 
-We can now exercise machine authentication and retries without a tenant. Continue with the [runbook](../../../3.Runbook.md) to register the real caller and agent, add S2S token acquisition, and export the agent's activity.
+We can now exercise machine authentication and retries without a tenant. Continue with the [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) runbook to register the real caller and agent, add S2S token acquisition, and export the agent's activity. The manual route requires no coding assistant.

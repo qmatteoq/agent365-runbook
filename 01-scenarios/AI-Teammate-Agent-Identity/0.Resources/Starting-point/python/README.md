@@ -181,14 +181,14 @@ same interpreter so <kbd>F5</kbd> does not regress.
 arrives, so `LearnAgent.start()` runs on the first message rather than at import. A lock makes
 concurrent first turns wait for a single handshake instead of racing several.
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 plumbing. Turning it into an AI Teammate, with blueprint,
-observability and Work IQ, is what the runbook does.
+Choose the [skill-led runbook](../../../3.Runbook.md) or the [manual runbook](../../../3.Runbook-Manual.md)
+for registration, publishing and instrumentation. This sample is optional and educational; both
+guides can be applied to our own agent. The manual path needs no coding assistant and covers Work
+IQ selection and consent, leaving runtime tool integration separate.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
-
-Some gotchas worth knowing before you start, all hit in practice:
+The registration steps have these requirements:
 
 - Omit `--authmode`. `s2s` and `both` are rejected alongside `--aiteammate`; `obo` is accepted but
   warns that it is superfluous, since it is the default for an AI Teammate.

@@ -6,6 +6,8 @@ We can run the entire workflow locally without an Azure subscription. The `.env.
 
 Agent 365 registration and observability come later in the [S2S runbook](../../../3.Runbook.md). This project has no Agent 365 dependencies, OpenTelemetry provider registration, custom metrics, or FMI token service.
 
+This is an optional educational sample. The [skill-led](../../../3.Runbook.md) and [manual](../../../3.Runbook-Manual.md) guides can also be applied to our own app-only agent; neither requires this shipment workflow.
+
 ## Run locally
 
 We need Node.js 22 or later and npm. The commands below use PowerShell 7 and run from this folder. We'll generate a signing key on our machine because the sample doesn't ship with a usable secret.
@@ -221,7 +223,7 @@ Every rejection records a reason and a verified client ID or `unknown`. Run and 
 
 ## Wrapping up
 
-We have the same machine-authenticated shipment workflow as the .NET sample, ready for the [S2S runbook](../../../3.Runbook.md). To begin the skill-based onboarding, we can ask:
+We have the same machine-authenticated shipment workflow as the .NET sample. Choose the [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) runbook for registration and instrumentation. The manual route requires no coding assistant. On the skill-led route, we can ask:
 
 > Register this agent with Agent 365. It runs without a signed-in user.
 

@@ -1,8 +1,8 @@
 # Starting point: Node.js + LangChain, Express web app
 
-> This is the **un-instrumented starting point** for the
-> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 code in it at all.
-> That is deliberate, the runbook walks you through adding it.
+> This optional educational sample has no Agent 365 instrumentation yet. Use the
+> [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) guide to add it,
+> or apply the same onboarding steps to our own web agent.
 
 A Microsoft ecosystem research assistant built with **LangChain (TypeScript)**, **Azure OpenAI** and
 the official [Microsoft Learn MCP server](https://learn.microsoft.com/api/mcp), served as a small
@@ -21,11 +21,10 @@ first user token in the OBO chain.
 ## Why LangChain here
 
 The Microsoft Agent Framework ships for .NET, Python and Go, so there is no JavaScript or TypeScript
-build of it to use. That leaves the choice of framework up to us, and the
-`instrument-observability` skill narrows it considerably: it auto-instruments LangChain, the OpenAI
-Agents SDK and the Claude Agent SDK on Node, and only soft-warns for Semantic Kernel and Google ADK.
-Picking LangChain means the observability phase of the runbook gives us `chat` spans without hand-writing an
-`InferenceScope` around every model call, and it keeps this sample a close sibling of the Python one.
+build of it to use. This sample uses LangChain, matching the Python sample's orchestration.
+The observability distro can instrument its model calls when initialized before the framework
+loads, on either authoring route. For our own agent, keep its framework and check whether that
+integration emits the required spans or needs explicit scopes.
 
 ## Prerequisites
 
@@ -162,14 +161,15 @@ it, so if you clone this repo into a folder like `C:\Users\you\.tools\`, an abso
 every page load into a 404 with nothing obviously wrong. Scoping the lookup to `root` limits the
 dotfile check to `index.html`, where it belongs.
 
-## Next step
+## Wrapping up
 
 This starting point is still free of Agent 365 instrumentation. The web app sign-in hook is in place
 for the user OBO path, ready for the moment the runbook has created the blueprint and the Entra app
 registration. We can run the sample anonymously at first, then turn on sign-in by filling in the
 Entra settings without changing the code.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Choose the [skill-led runbook](../../../3.Runbook.md) or the
+[manual runbook](../../../3.Runbook-Manual.md), which requires no coding assistant.
 
 When you reach the observability phase, note that the runbook's Python warning about initialisation order applies
 here too: the observability distro patches libraries as they load, so the

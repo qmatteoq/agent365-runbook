@@ -1,11 +1,9 @@
 # Known Skill Gaps
 
-The [Agent 365 Skills](https://github.com/microsoft/agent365-skills) do most of the onboarding work
-correctly, and the runbooks in this repo lean on them. But they are evolving alongside a preview
-product, and there are places where following a skill's default path produces a working-looking
-agent that is subtly wrong.
-
-This page records those, so you can recognise them rather than debug them from scratch.
+The [Agent 365 Skills](https://github.com/microsoft/agent365-skills) automate the skill-led
+onboarding route. This page records behavior to check against the versions we use; each of the
+four scenarios also has a [manual runbook](../01-scenarios/README.md) that needs no assistant.
+The identity, exporter and initialization checks below also apply to manually written code.
 
 > **How to read this.** Each entry says what the skill does, why it's a problem, and what to do
 > instead. None of these are reasons to avoid the skills. They are reasons to check one specific
@@ -30,9 +28,12 @@ to a service-principal chain you don't want either.
 **Symptom.** Export appears to work, but the identity on the exported spans is wrong, and activity
 attribution in the Microsoft 365 admin center doesn't match what you expect.
 
-**What to do.** For Teams-hosted agents, follow
-[Teams Agent: Custom Engine OBO](../01-scenarios/Teams-Agent-Custom-Engine-OBO/) rather than the
-skill's default, and check the token chain the skill generated against it before running.
+**What to do.** Follow the custom engine
+[skill-led](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook.md) or
+[manual](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) guide, and confirm
+that the OAuth connection and telemetry name the bot app. This is different from the
+[S2S scenario](../01-scenarios/Service-to-Service-Agent/1.Overview.md), where an app-only child
+identity is the intended acting application.
 
 **Not affected.** The web-app user-OBO scenario. There, `obo` is the correct answer and the skill
 does the right thing.
@@ -48,8 +49,10 @@ your LLM library, then continues.
 auto-instrumentation you get an `invoke_agent` span and no `chat` spans. The agent looks
 instrumented, and half its telemetry is missing.
 
-**What to do.** On a soft-warned stack, plan to wrap every LLM call in `InferenceScope` manually,
-and verify you see `chat` spans in Phase 4 rather than assuming them.
+**What to do.** Check instrumentation for the actual framework and package versions. The manual
+LangChain examples initialize the distro before model imports; other frameworks may require an
+explicit `InferenceScope` around each real model call. Inspect the child spans during the chosen
+runbook's verification phase, and don't add a second span when the framework already emits one.
 
 ---
 
@@ -69,23 +72,27 @@ ES module imports are all evaluated before any of the importing module's own sta
 `useMicrosoftOpenTelemetry()` call sitting at the top of `main.ts` still executes after every
 `import` in that file has already loaded LangChain.
 
-**What to do.** On Python, call the distro at the very top of your entry point, above any agent
-import. On Node.js, put the call in its own module, `src/observability.ts`, and make importing that
-module the first line of your entry point. Either way, confirm `chat` spans appear rather than
-assuming them.
+**What to do.** Load configuration first, then initialize the distro before importing the model
+framework. For Node ESM, use the distro's loader and a bootstrap that loads observability before
+the application. Moving a call above static imports is insufficient. The
+[Teams manual](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) and
+[AI Teammate manual](../01-scenarios/AI-Teammate-Agent-Identity/3.Runbook-Manual.md) show that
+startup order. Confirm actual inference and tool spans, and retain a single initialization.
 
 ---
 
 ## 5. Two enable flags, easy to set one
 
-**Applies to:** all stacks.
+**Applies to:** Python and Node.js distro configurations with separate Agent 365 switches.
 
-`enable_a365` / `EnableA365` / `a365.enabled` registers the span processors.
-`a365_enable_observability_exporter` / `EnableAgent365Exporter` / `a365.enableObservabilityExporter`
-ships the spans. Setting only the first produces correctly-shaped spans that never leave the
-process, with no error to tell you.
+`enable_a365` / `a365.enabled` enables Agent 365 processing.
+`a365_enable_observability_exporter` / `a365.enableObservabilityExporter` enables export.
+For an Agent 365 destination, both must be configured. The .NET 1.0.7 examples instead select
+`ExportTarget.Agent365` through the distro's exporter configuration.
 
-**What to do.** Check both are set, in code rather than only in environment variables.
+**What to do.** Follow the switches for the package version in our runbook. The S2S manual also
+offers Console and OTLP destinations that do not contact Agent 365; local spans from those
+destinations are not proof of tenant ingestion.
 
 ---
 
@@ -130,3 +137,23 @@ miss, because the common path looks correct.
 
 **What to do.** Chain your explicit `.AgentId()` **after** `.FromTurnContext()`, and verify on a
 non-chat turn rather than only in Teams chat.
+
+## 8. S2S must not inherit a human token or caller identity
+
+**Applies to:** webhooks, schedulers and other app-only workloads.
+
+The caller's incoming API token authorizes the request, not the agent's downstream work. The
+agent needs its own application permissions and blueprint-to-child token exchange. A developer
+token or user OBO fallback would change the identity under which the operation runs.
+
+**What to do.** Follow the [S2S skill-led](../01-scenarios/Service-to-Service-Agent/3.Runbook.md)
+or [manual](../01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) path. Use the child
+application ID and S2S export endpoint, retain verified service-caller attributes without inventing
+a human, and check that rejected requests and completed replays create no new agent invocation.
+Stub reasoning must not emit a `chat` span.
+
+## Wrapping up
+
+Use these checks alongside the chosen runbook, whether changes come from a skill or our editor.
+Resolve missing identity, token acquisition and span-shape problems before treating successful
+export as completed onboarding.

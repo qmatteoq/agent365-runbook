@@ -1,20 +1,19 @@
 # Overview: Onboarding an agent into Agent 365
 
-This section covers the concepts every runbook assumes. 
+This section introduces the four scenarios and the concepts shared by their skill-led and manual runbooks.
 
 ## What onboarding actually means
 
-An agent already reasons, calls tools and answers questions. Onboarding it in Agent 365 adds four things around it:
+An agent already reasons, calls tools and responds to messages or business events. Agent 365 onboarding can add these capabilities:
 
-| Capability | What it gives you | Skill |
+| Capability | What it gives you | Optional skill |
 | --- | --- | --- |
 | **Identity** | The agent exists as a first-class object in your tenant, with its own registration and permissions | `a365-setup`, `make-a365-agent` |
 | **Observability** | Agent activity appears in Microsoft Defender, Microsoft Purview and the Microsoft 365 admin center | `instrument-observability` |
 | **Microsoft 365 data** | The agent can read and act on Mail, Calendar, files and more through Work IQ MCP servers | `add-workiq-tools` |
-| **Messaging** | The agent can be reached over Teams, email and @mentions, and it operates under its own identity. | `make-ai-teammate` |
+| **Messaging** | An AI Teammate has Microsoft 365 presence; supported channels and handlers determine which messages and events it receives | `make-ai-teammate` |
 
-You do not need all four. The runbooks are phased so you can stop after any one of them and still
-have a working, valid agent.
+We don't need every capability. Registration and observability are common to all four scenarios; Work IQ is optional where supported, and the S2S webhook does not need teammate messaging or an agent user. Follow the chosen runbook's checkpoints, since registration alone does not produce activity telemetry.
 
 ## The key decision: whose identity acts?
 
@@ -45,23 +44,24 @@ data**:
 | **Microsoft 365 admin center** (Agent Activity) | `invoke_agent` rows **only**, and it reads the caller identity off that span |
 | **Microsoft Purview** | Content and compliance signals |
 
-## The skills
+## Two ways to complete each scenario
 
-The [Agent 365 Skills](https://techcommunity.microsoft.com/blog/agent-365-blog/agent-365-skills-bring-your-agents-into-microsoft-agent-365-in-minutes/4529838)
-are the primary path through these runbooks. They are additive and idempotent. They don't delete or
-restructure your code, and re-running one is safe. They work with every major AI coding assistant.
-See [Installing the Skills](Installing-the-Skills.md) for the route that matches your tool.
+Every scenario has a skill-led `3.Runbook.md` and a manual `3.Runbook-Manual.md`. The [scenario index](../01-scenarios/README.md) links both routes for web OBO, custom engine Teams OBO, AI Teammate and S2S.
+
+For the skill-led route, install the [Agent 365 Skills](https://github.com/microsoft/agent365-skills) using [Installing the Skills](Installing-the-Skills.md), then review the generated changes. For the manual route, use the portal instructions, CLI commands and source edits directly, without installing skills or using a coding assistant. The token and identity requirements are the same whichever route we choose.
+
+The manual guides identify where Work IQ runtime integration is outside their scope. A manifest and tenant consent alone do not give the model callable tools, and S2S downstream APIs need application permissions rather than a delegated Work IQ token.
 
 ## What you need before starting
 
 | Requirement | Details |
 | --- | --- |
 | An agent | Either your own, or one of the starting points in [`01-scenarios/`](../01-scenarios/) |
-| Azure subscription | For the model deployment (Azure OpenAI or equivalent). The starting points authenticate to it with **Entra credentials by default** (`az login` locally, or a managed identity on Azure), and support an **API key** as an alternative when one is configured. Entra needs the *Cognitive Services OpenAI User* role, and is the only option in tenants where keys are disabled by policy |
+| Model and hosting resources | Keep our agent's existing provider and hosting. Azure samples need access to the chosen deployment; an Azure OpenAI Entra identity needs the *Cognitive Services OpenAI User* role. The S2S samples can run with stubs and no model resource |
 | Microsoft 365 tenant | With Agent 365 enabled and licensing assigned |
-| Tenant permissions | Sufficient to register applications and grant admin consent (Global Administrator or AI Administrator) |
-| A coding assistant | Any of the major ones: Claude Code, GitHub Copilot CLI, VS Code agent mode, Cursor, Windsurf, Codex CLI, Gemini CLI. Optional: every step also documents the manual CLI and SDK equivalent |
-| The skills | Installed into that assistant. See [Installing the Skills](Installing-the-Skills.md) |
+| Tenant permissions | Permission to create the required registrations and an administrator authorized to complete consent; see the chosen runbook for its roles and approval steps |
+| Agent 365 CLI and build tools | Needed for manual commands and skill-led onboarding |
+| A coding assistant and the skills | Only for the skill-led route. See [Installing the Skills](Installing-the-Skills.md); manual runbooks do not require them |
 
 Per-scenario prerequisites are listed in each runbook's Phase 0.
 
@@ -76,3 +76,7 @@ we enable a real model; they don't fall back to an operator's `az login` session
 | Agent 365 developer documentation | https://learn.microsoft.com/microsoft-agent-365/ |
 | Agent 365 Skills repository | https://github.com/microsoft/agent365-skills |
 | Agent 365 Skills announcement | https://techcommunity.microsoft.com/blog/agent-365-blog/agent-365-skills-bring-your-agents-into-microsoft-agent-365-in-minutes/4529838 |
+
+## Wrapping up
+
+Choose the operation's identity path first, then use either runbook for that scenario. A background task needs S2S when it acts with application permissions; it needs an AI Teammate user only when its operations require that user context.

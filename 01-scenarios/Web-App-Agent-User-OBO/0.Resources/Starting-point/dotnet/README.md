@@ -1,8 +1,8 @@
 # Starting point: .NET Agent Framework, Blazor web app
 
-> This is the **un-instrumented starting point** for the
-> [Web App Agent: User OBO](../../../3.Runbook.md) scenario. It has no Agent 365 observability code in it yet.
-> That is deliberate, the runbook walks you through adding it.
+> This optional educational sample has no Agent 365 observability code yet. Use the
+> [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) guide to add it,
+> or apply the same onboarding steps to our own web agent.
 
 A minimal **Microsoft Agent Framework (.NET)** agent, hosted as a Blazor Server web app with a simple
 chat UI. There is no Teams hosting, you chat with it directly in the browser.
@@ -105,12 +105,13 @@ configured and the chat page opens anonymously. Once the runbook fills in `Azure
 `Agent365Observability`, the same page requires sign-in and shows the signed-in user in the navigation
 menu.
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 observability plumbing. Onboarding the agent identity,
-blueprint, token exchange, observability, and Work IQ access is what the runbook adds.
+We can now add the blueprint, agent identity, OBO token exchange and observability. Work IQ server
+selection and consent are optional; making those tools callable requires a runtime integration.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Choose the [skill-led runbook](../../../3.Runbook.md) or the
+[manual runbook](../../../3.Runbook-Manual.md), which requires no coding assistant.
 
 To compare against the finished, fully instrumented version, see
 [`dotnet-agent-no-teams`](https://github.com/qmatteoq/agent365-demos/tree/main/dotnet-agent-no-teams)
