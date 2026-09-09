@@ -156,9 +156,11 @@ import, and a memoised promise makes concurrent first turns wait for a single ha
 of racing several. The agent core stays constructible without doing any network work, which is
 what keeps `src/agent.ts` free of hosting concerns.
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 plumbing. The runbook adds onboarding: blueprint, observability,
-and Work IQ.
+This optional educational sample is ready for Agent 365 registration and instrumentation. Choose
+the [skill-led runbook](../../../3.Runbook.md) or the [manual runbook](../../../3.Runbook-Manual.md),
+which requires no coding assistant. Both can also be followed with our own Teams agent.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Work IQ selection and consent are optional. The manual guide leaves runtime tool integration
+outside its worked implementation.

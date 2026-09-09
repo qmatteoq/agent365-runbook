@@ -1,16 +1,15 @@
 # Scenarios
 
-Each scenario is a complete onboarding, start to finish: an un-instrumented agent, and the runbook
-that turns it into an Agent 365 agent.
+Each of the four scenarios has a skill-led and a manual onboarding runbook, with .NET, Python and Node.js examples. We can use our own agent or an optional educational sample; the sample workflow is not an Agent 365 requirement.
 
 ## Available scenarios
 
-| Scenario | Onboarding path | Stacks | Hosting | Status |
+| Scenario | Onboarding path | Stacks | Hosting | Runbooks |
 | --- | --- | --- | --- | --- |
-| [Web App Agent: User OBO](Web-App-Agent-User-OBO/) | User on-behalf-of | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Web app (Blazor / FastAPI / Express) | ✅ Runbook written |
-| [Teams Agent: Custom Engine OBO](Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Teams / M365 Copilot | ✅ Runbook written |
-| [AI Teammate: Agent Identity](AI-Teammate-Agent-Identity/) | Agent's own identity | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Teams / M365 Copilot | ✅ Runbook written |
-| [Service-to-service agent](Service-to-Service-Agent/1.Overview.md) | App-only S2S | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Webhook (ASP.NET Core / FastAPI / Express) | Starting points, [skill-led](Service-to-Service-Agent/3.Runbook.md) and [manual](Service-to-Service-Agent/3.Runbook-Manual.md) runbooks |
+| [Web App Agent: User OBO](Web-App-Agent-User-OBO/) | User on-behalf-of | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Web app (Blazor / FastAPI / Express) | [Skill-led](Web-App-Agent-User-OBO/3.Runbook.md) and [manual](Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| [Teams Agent: Custom Engine OBO](Teams-Agent-Custom-Engine-OBO/) | Custom engine agent OBO | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Teams / M365 Copilot | [Skill-led](Teams-Agent-Custom-Engine-OBO/3.Runbook.md) and [manual](Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) |
+| [AI Teammate / Autopilot: Agent Identity](AI-Teammate-Agent-Identity/) | Agent's own identity | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Teams / M365 Copilot | [Skill-led](AI-Teammate-Agent-Identity/3.Runbook.md) and [manual](AI-Teammate-Agent-Identity/3.Runbook-Manual.md) |
+| [Service-to-service agent](Service-to-Service-Agent/1.Overview.md) | App-only S2S | .NET Agent Framework, Python + LangChain, Node.js + LangChain | Webhook (ASP.NET Core / FastAPI / Express) | [Skill-led](Service-to-Service-Agent/3.Runbook.md) and [manual](Service-to-Service-Agent/3.Runbook-Manual.md) |
 
 The scenarios are organised by **onboarding path**, not by stack, because the path is what
 changes the work. Within a scenario, the stacks appear as parallel variants of the same steps.
@@ -35,25 +34,25 @@ Every scenario folder follows the same layout:
 | `0.Resources/` | `Images/` for screenshots and diagrams, `Starting-point/` for the un-instrumented agent |
 | `1.Overview.md` | What the scenario is, who it's for, in scope / out of scope |
 | `2.Architecture.md` | How the pieces fit together, and the token flow |
-| `3.Runbook.md` | The phased, step-by-step onboarding guide |
-| `3.Runbook-Manual.md` | Manual commands and code changes, where a companion guide is available |
-| `4.Sample-prompts.md` | Prompts to exercise the finished agent |
+| `3.Runbook.md` | Skill-led onboarding, with commands and explanations of the generated changes |
+| `3.Runbook-Manual.md` | Manual registration and instrumentation, available for every scenario |
+| `4.Sample-prompts.md` | Chat prompts or S2S HTTP requests to exercise the sample |
 
 ## Runbook phases
 
-The web app, Teams and AI teammate runbooks use these phases, and **each is a valid stopping point**:
+The phase order depends on the scenario. Both authoring routes follow that scenario's order:
 
-| Phase | What you get | Skill |
-| --- | --- | --- |
-| **Phase 0**: Prerequisites | A working starting point and the tooling installed | N/A |
-| **Phase 1**: Registration | The agent exists as an identity in your tenant | `a365-setup`, `make-a365-agent` / `make-ai-teammate` |
-| **Phase 2**: Observability | Agent activity flows to Defender, Purview and the admin center | `instrument-observability` |
-| **Phase 3**: Work IQ | The agent can read and act on Microsoft 365 data | `add-workiq-tools` |
-| **Phase 4**: Test and verify | Confirmation that all of the above actually works | `test-local` |
+| Scenario | Phase order |
+| --- | --- |
+| Web app, user OBO | 0: Run the agent; 1: Sign users in; 2: Register; 3: Observability; 4: Optional Work IQ; 5: Verify |
+| Teams, custom engine OBO | 0: Prepare Teams hosting; 1: Register; 2: Observability; 3: Optional Work IQ; 4: Verify |
+| AI Teammate / Autopilot | 0: Prepare the application; 1: Register, publish and approve an instance; 2: Observability; 3: Optional Work IQ; 4: Verify |
+| Service-to-service | 0: Run the webhook; 1: Protect ingress; 2: Register; 3: Observability; 4: Verify |
 
-If you only need visibility, stop after Phase 2. If you don't need Microsoft 365 data access, skip
-Phase 3 entirely.
+If we only need visibility, complete observability and the verification phase, skipping Work IQ. The manual guides cover Work IQ selection and consent but leave runtime integration outside their worked implementations. Existing tool integrations can remain in place.
 
-The S2S guide has its own phase order: local execution, inbound API authorization, agent registration,
-observability, then verification. It uses webhook requests and a replay harness instead of
-`test-local`, which targets AI teammate messaging, and doesn't add Work IQ.
+S2S uses webhook requests and a replay harness, not the messaging-only `test-local` skill. It doesn't add Work IQ: its downstream services need application-permission APIs, and the supplied tools remain stubs until we implement those integrations.
+
+## Wrapping up
+
+Use the identity path to choose a scenario and the authoring route to choose a runbook. The architecture and sample requests apply to both routes; keep the verification expectations within the capabilities we've actually implemented.

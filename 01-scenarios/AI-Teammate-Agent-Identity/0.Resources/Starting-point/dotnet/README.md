@@ -127,14 +127,16 @@ CLI writes the real connection settings during onboarding, and it also owns `man
 `a365 setup all --aiteammate` and `a365 publish` generate and stamp it, so it must not be
 hand-written.
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 plumbing, and has no hosting layer yet. Turning it
-into an AI Teammate, with hosting, blueprint, observability and Work IQ, is what the runbook does.
+The runbooks add Agent 365 registration and observability around the existing agent.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Choose the [skill-led runbook](../../../3.Runbook.md) or the [manual runbook](../../../3.Runbook-Manual.md)
+for registration, publishing and instrumentation. This sample is optional and educational; both
+guides can be applied to our own agent. The manual path needs no coding assistant and covers Work
+IQ selection and consent, leaving runtime tool integration separate.
 
-Some gotchas worth knowing before you start, all hit in practice:
+The registration steps have these requirements:
 
 - Omit `--authmode`. `s2s` and `both` are rejected alongside `--aiteammate`; `obo` is accepted
   but warns that it is superfluous, since it is the default for an AI Teammate.

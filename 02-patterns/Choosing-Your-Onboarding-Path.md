@@ -2,6 +2,8 @@
 
 The onboarding path determines the token chain, the Entra registrations, and what the admin center can attribute the agent's activity to. We need to distinguish the hosting model from the execution mode: a background webhook doesn't need an AI teammate's user account.
 
+All four scenarios have skill-led and manual runbooks. We choose the identity path first; a coding assistant is an optional way to make the changes, not a different authentication flow.
+
 ---
 
 ## The one question that decides it
@@ -65,7 +67,7 @@ Its user-context operations are bounded by the permissions of the agent's own us
 
 The agent handles a webhook or scheduled task without a user token. A blueprint-derived identity uses an agentic client-credentials exchange to obtain resource tokens, and the observability exporter uses the S2S route.
 
-The [supply-chain scenario](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) separates the webhook API's caller permission from the agent's outbound permissions. Its .NET, Python and Node.js starting points have the same local stubs, app-only authorization and replay handling; the runbook adds Agent 365 identity and telemetry.
+The supply-chain scenario separates the webhook API's caller permission from the agent's outbound permissions. Its [skill-led](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) and [manual](../01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) guides use the same .NET, Python and Node.js examples, with local stubs, app-only authorization and replay handling.
 
 **Choose it when** middleware, a scheduler or another service initiates work that the agent must perform with application permissions.
 
@@ -79,7 +81,7 @@ the operation, then use the implementation that matches our stack.
 
 **"AI Teammate is the newest, so it must be the most advanced."** It's all about the role of the agent and its permissions. If you need an agent that should only ever act within a user's permissions, then the AI Teammate path isn't the right one.
 
-**"We'll start with the simplest and migrate."** Migration is real work. The demo repo these runbooks are derived from migrated its Teams agents from a service-to-service chain to custom engine OBO, and it touched the token service, the configuration, the agent id and the export endpoint.
+**"We'll start with the simplest and migrate."** Changing identity paths can require changes to the token service, permissions, agent ID and export endpoint. Choose the permissions the operation needs before registering the agent.
 
 ---
 
@@ -100,3 +102,10 @@ The symptoms are specific enough to be diagnostic.
 ## Wrapping up
 
 Once we've chosen the operation's identity context, [Token chains by onboarding path](The-Three-Token-Chains.md) explains which token to acquire and which identity to put on the exported spans.
+
+| Scenario | Skill-led runbook | Manual runbook |
+| --- | --- | --- |
+| Web app, user OBO | [Skill-led](../01-scenarios/Web-App-Agent-User-OBO/3.Runbook.md) | [Manual](../01-scenarios/Web-App-Agent-User-OBO/3.Runbook-Manual.md) |
+| Teams, custom engine OBO | [Skill-led](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook.md) | [Manual](../01-scenarios/Teams-Agent-Custom-Engine-OBO/3.Runbook-Manual.md) |
+| AI Teammate / Autopilot | [Skill-led](../01-scenarios/AI-Teammate-Agent-Identity/3.Runbook.md) | [Manual](../01-scenarios/AI-Teammate-Agent-Identity/3.Runbook-Manual.md) |
+| Service-to-service | [Skill-led](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) | [Manual](../01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) |

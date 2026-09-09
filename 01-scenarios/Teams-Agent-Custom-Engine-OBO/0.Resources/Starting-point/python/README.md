@@ -138,12 +138,14 @@ arrives, so `LearnAgent.start()` runs on the first message rather than at import
 concurrent first turns wait for a single handshake instead of racing several.
 
 
-## Next step
+## Wrapping up
 
-This agent is intentionally free of Agent 365 plumbing. The runbook adds onboarding: blueprint, observability,
-and Work IQ.
+This optional educational sample is ready for Agent 365 registration and instrumentation. Choose
+the [skill-led runbook](../../../3.Runbook.md) or the [manual runbook](../../../3.Runbook-Manual.md),
+which requires no coding assistant. Both can also be followed with our own Teams agent.
 
-➡️ **[Go to the runbook](../../../3.Runbook.md)**
+Work IQ selection and consent are optional. The manual guide leaves runtime tool integration
+outside its worked implementation.
 
 To compare against the finished, fully instrumented version, see
 [`python-agent-teams`](https://github.com/qmatteoq/agent365-demos/tree/main/python-agent-teams)

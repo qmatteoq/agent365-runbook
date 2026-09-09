@@ -1,12 +1,9 @@
 # Token chains by onboarding path
 
-Each onboarding path acquires its observability token differently. This is the densest part of
-Agent 365 onboarding and the part where a small mistake produces the most confusing symptom, so it
-is worth understanding rather than copying.
-
-The OBO and AI teammate sections describe the implementations used by the existing runbooks. The S2S
-section follows the current Microsoft protocol documentation; that scenario ships
-un-instrumented .NET, Python and Node.js starting points, so tenant token acquisition is part of its onboarding exercise.
+The four scenarios acquire observability tokens through different flows. The required identity,
+audience and export route are the same whether we follow a skill-led or manual runbook.
+Use this page to compare those flows, then open either guide from the
+[scenario index](../01-scenarios/README.md) for the implementation in our stack.
 
 ---
 
@@ -15,14 +12,14 @@ un-instrumented .NET, Python and Node.js starting points, so tenant token acquis
 Three values have to agree:
 
 ```
-token azp  ==  gen_ai.agent.id  ==  the id in the export route
+token azp (or appid)  ==  gen_ai.agent.id  ==  the id in the export route
 ```
 
-When they agree, telemetry lands. When they disagree, you get `HTTP 403`, or worse, a `200` and
-nothing in the admin centre.
+These values identify the acting application; a v1 token can use `appid` where a v2 token uses
+`azp`. Agreement is necessary, but it doesn't prove ingestion: the resource audience, grants,
+semantic spans and tenant prerequisites must also be correct.
 
-**Each path makes a different value correct.** That is the whole difficulty. There is no single
-"the agent id" to reach for.
+Use the application ID appropriate to the flow, not a service principal's directory object ID:
 
 | Path | `gen_ai.agent.id` is… | Because |
 | --- | --- | --- |
@@ -119,16 +116,9 @@ Three details in that command are load-bearing:
 Because the token's `azp` is the bot app, and the agent id must match it. A Teams turn carries no
 agentic identity, so the agent has no credential with which to make itself the `azp`.
 
-This was established empirically rather than assumed. One token, tried against three ids:
-
-| Id used in the export route | Result |
-| --- | --- |
-| Agent identity | `403` |
-| Blueprint | `403` |
-| **Bot app** | **`415`** |
-
-`415` is the pass: authorised, wrong content type for the probe. Authorisation had already
-succeeded, which is what the probe was testing.
+Use the bot client ID consistently in the token cache, telemetry and export route. The blueprint
+remains governance metadata; substituting it or the child ID does not change the token's acting
+application.
 
 ### Do not use the S2S endpoint here
 
@@ -137,9 +127,10 @@ service-to-service route takes application tokens only and refuses a delegated o
 
 ---
 
-## Chain 3: AI Teammate (deferred, not fetched)
+## Chain 3: AI Teammate (agentic user)
 
-The teammate does not acquire a token up front. It registers *the means* to acquire one:
+The teammate acquires a delegated token in its own agent-user context. On .NET, the cache can
+register the authorization context needed to obtain it:
 
 ```csharp
 RegisterObservability(
@@ -149,32 +140,33 @@ RegisterObservability(
     EnvironmentUtils.GetObservabilityAuthenticationScope());
 ```
 
-The cache resolves it lazily when the exporter asks. This matters because the correct token depends
-on the turn, and the turn isn't always agentic.
+The struct binds acquisition to the turn's authorization and handler. The manual implementation
+requests the token before model execution as well as exposing the cache to the exporter.
 
 ### Not every turn is agentic
 
-```csharp
-if (Activity.IsAgenticRequest()) { /* agentic handler → GetAgenticInstanceId() */ }
-else                             { /* OBO handler → ResolveAgentIdentity(...) */ }
-```
+A legitimate non-agentic local turn can use the application's plain response path, but it does
+not prove tenant telemetry. For an agentic turn, require valid instance and tenant IDs and a token
+from the configured agentic-user handler before executing the instrumented operation. Missing
+identity or failed token acquisition must not silently select a developer credential or claim
+successful instrumentation. An application that also supports human OBO needs that separate
+authorization flow; non-agentic does not automatically mean OBO.
 
-When neither resolves, the agent should still answer and simply skip observability. Failing the
-turn because telemetry couldn't be identified is the wrong trade.
+### Register the .NET token cache
 
-### The registration the docs get wrong
-
-`UseMicrosoftOpenTelemetry` does **not** register `IExporterTokenCache<AgenticTokenStruct>`,
-contrary to the skill's reference documentation (verified against `Microsoft.OpenTelemetry` 1.0.7).
-Register it yourself or the host fails to start:
+With `Microsoft.OpenTelemetry` 1.0.7, register `IExporterTokenCache<AgenticTokenStruct>` explicitly.
+The agent and exporter must share the same cache:
 
 ```csharp
 var agenticTokenCache = new AgenticTokenCache();
 builder.Services.AddSingleton<IExporterTokenCache<AgenticTokenStruct>>(agenticTokenCache);
 ```
 
-This one fails loudly and immediately, which makes it cheap. It is listed because the documentation
-points the wrong way, not because it is hard to survive.
+The [manual AI Teammate guide](../01-scenarios/AI-Teammate-Agent-Identity/3.Runbook-Manual.md)
+also resolves the registered token before running the model, so deferred acquisition errors reach
+the application's error handler. Node refreshes its built-in cache asynchronously before the
+turn; Python acquires the token asynchronously and exposes its cached string through a synchronous
+exporter resolver. None of these paths uses an application-only S2S token for an agentic-user turn.
 
 ---
 
@@ -209,9 +201,11 @@ object ID. Set `UseS2SEndpoint = true` and supply the custom token resolver desc
 [S2S authentication recipe](https://learn.microsoft.com/microsoft-agent-365/developer/observability-authentication-setup#agent-365-enabled-using-s2s).
 That recipe currently uses `api://9b975845-388f-4429-889e-eab1ef63949c/.default`.
 
-The [S2S runbook](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) covers the separate
-webhook registration, caller app role, agent permission and operational telemetry. An ordinary
-non-agentic service principal can use direct client credentials, but that isn't the
+The [skill-led](../01-scenarios/Service-to-Service-Agent/3.Runbook.md) and
+[manual S2S runbooks](../01-scenarios/Service-to-Service-Agent/3.Runbook-Manual.md) cover the separate
+webhook registration, caller app role, agent permission and operational telemetry. Their runtime
+token resolver acquires and refreshes the agent's own credential without a signed-in operator.
+An ordinary non-agentic service principal can use direct client credentials, but that isn't the
 blueprint-derived identity path used in this scenario.
 
 ---
@@ -237,7 +231,12 @@ up](https://learn.microsoft.com/microsoft-agent-365/developer/observability-conc
 
 ---
 
-## Related
+## Wrapping up
+
+Match the token's acting application, resource and permission type to the exported identity and
+endpoint. OBO and agentic-user telemetry use the delegated route; the app-only S2S scenario uses
+`/observabilityService`. The authoring route does not change those requirements.
 
 - [Choosing Your Onboarding Path](Choosing-Your-Onboarding-Path.md)
+- [Skill-led and manual runbooks for every scenario](../01-scenarios/README.md)
 - [Known Skill Gaps](../03-references/Known-Skill-Gaps.md)

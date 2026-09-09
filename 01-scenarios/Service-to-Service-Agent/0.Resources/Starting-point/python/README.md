@@ -4,6 +4,8 @@ We're starting with a FastAPI webhook that processes shipment exceptions. It val
 
 We can run the local exercise without Azure resources. All four tools are in-memory stubs, and the default reasoner produces the same deterministic summary as .NET. This project has no Agent 365 registration, token exchange, telemetry exporter or instrumentation. We add those later through the [S2S runbook](../../../3.Runbook.md).
 
+This is an optional educational sample. The [skill-led](../../../3.Runbook.md) and [manual](../../../3.Runbook-Manual.md) guides can also be applied to our own app-only agent; neither requires this shipment workflow.
+
 ## Run locally
 
 We need Python 3.12 or later and `uv`. Use the machine's configured company package registry or proxy for package operations. `uv` doesn't read pip's `pip.ini`; on machines where only pip has the approved feed configured, carry that existing setting into the terminal before using `uv`:
@@ -172,10 +174,10 @@ Application logs are JSON records with a UTC `Timestamp` and stable fields such 
 
 ## Wrapping up
 
-We now have the same machine-authenticated shipment workflow in Python, including its retry boundaries and local simulation. Continue with the [runbook](../../../3.Runbook.md) to register the caller and agent and add observability. When we reach the instrumentation step, the skill prompt can stay short:
+We now have the machine-authenticated shipment workflow in Python, including its retry boundaries and local simulation. Choose the [skill-led](../../../3.Runbook.md) or [manual](../../../3.Runbook-Manual.md) runbook to register the caller and agent and add observability. The manual route requires no coding assistant. On the skill-led route, the instrumentation prompt is:
 
 ```text
 Add Agent 365 observability to this agent.
 ```
 
-The skill and runbook supply the instrumentation details. We keep that setup outside this starting point.
+The skill adds the instrumentation on that route; the manual guide supplies the commands and source edits to make ourselves. Neither setup is included in this starting point.
