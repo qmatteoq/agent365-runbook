@@ -5,6 +5,10 @@ onboarding route. This page records behavior to check against the versions we us
 four scenarios also has a [manual runbook](../01-scenarios/README.md) that needs no assistant.
 The identity, exporter and initialization checks below also apply to manually written code.
 
+For a runtime symptom such as missing activity, an authorization error or a host that won't start,
+use the [troubleshooting guide](Troubleshooting.md). It covers both authoring routes and keeps
+package-specific workarounds separate from general diagnostics.
+
 > **How to read this.** Each entry says what the skill does, why it's a problem, and what to do
 > instead. None of these are reasons to avoid the skills. They are reasons to check one specific
 > thing before moving on.
